@@ -2,476 +2,611 @@ import React, { useState, useMemo } from 'react';
 import { 
   Users, 
   Search, 
-  ArrowUpDown, 
-  RotateCcw, 
   Download, 
-  Flame, 
-  Target
+  ArrowUpDown, 
+  Award
 } from 'lucide-react';
-import type { BatterRecord, BowlerRecord } from '../types/cricket';
-import { formatNumber, formatPercent, formatRunsSaved } from '../utils/formatters';
+import type { 
+  V2BatterRecord, 
+  V2BowlerRecord,
+  BatterRecord,
+  BowlerRecord
+} from '../types/cricket';
+import { formatNumber, formatPercent } from '../utils/formatters';
 import { downloadCsv } from '../data/superrrLoader';
 
-interface CandidateExplorerSectionProps {
-  allBatters: BatterRecord[];
-  allBowlers: BowlerRecord[];
+interface CandidateExplorerProps {
+  v2AllBatters: V2BatterRecord[];
+  v2AllBowlers: V2BowlerRecord[];
+  v1AllBatters: BatterRecord[];
+  v1AllBowlers: BowlerRecord[];
   rawCsvs: {
-    allBatters: string;
-    allBowlers: string;
+    v2Batters: string;
+    v2Bowlers: string;
+    v1Batters: string;
+    v1Bowlers: string;
   };
-  onSelectBatter: (batter: BatterRecord) => void;
-  onSelectBowler: (bowler: BowlerRecord) => void;
+  onSelectV2Batter: (batter: V2BatterRecord) => void;
+  onSelectV2Bowler: (bowler: V2BowlerRecord) => void;
+  onSelectV1Batter: (batter: BatterRecord) => void;
+  onSelectV1Bowler: (bowler: BowlerRecord) => void;
 }
 
-export const CandidateExplorerSection: React.FC<CandidateExplorerSectionProps> = ({
-  allBatters,
-  allBowlers,
+export const CandidateExplorerSection: React.FC<CandidateExplorerProps> = ({
+  v2AllBatters,
+  v2AllBowlers,
+  v1AllBatters,
+  v1AllBowlers,
   rawCsvs,
-  onSelectBatter,
-  onSelectBowler,
+  onSelectV2Batter,
+  onSelectV2Bowler,
+  onSelectV1Batter,
+  onSelectV1Bowler
 }) => {
-  const [activeTab, setActiveTab] = useState<'batters' | 'bowlers'>('batters');
+  const [modelMode, setModelMode] = useState<'v2' | 'v1'>('v2');
+  const [discipline, setDiscipline] = useState<'batters' | 'bowlers'>('batters');
   const [searchTerm, setSearchTerm] = useState('');
-  const [sortField, setSortField] = useState<string>('rank');
-  const [sortAsc, setSortAsc] = useState<boolean>(true);
-  const [filterTop10Only, setFilterTop10Only] = useState<boolean>(false);
-
-  const handleTabChange = (tab: 'batters' | 'bowlers') => {
-    setActiveTab(tab);
-    setSearchTerm('');
-    setSortField('rank');
-    setSortAsc(true);
-  };
+  const [roleFilter, setRoleFilter] = useState('all');
+  const [statusFilter, setStatusFilter] = useState<'all' | 'top10' | 'rest'>('all');
+  const [sortField, setSortField] = useState<string>('score');
+  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
 
   const handleSort = (field: string) => {
     if (sortField === field) {
-      setSortAsc(!sortAsc);
+      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
     } else {
       setSortField(field);
-      setSortAsc(field === 'rank' ? true : false);
+      setSortDirection(field === 'rank' ? 'asc' : 'desc');
     }
   };
 
-  const resetFilters = () => {
-    setSearchTerm('');
-    setSortField('rank');
-    setSortAsc(true);
-    setFilterTop10Only(false);
-  };
+  // Filtered V2 Batters
+  const filteredV2Batters = useMemo(() => {
+    let result = [...v2AllBatters];
 
-  const filteredBatters = useMemo(() => {
-    let list = [...allBatters];
+    if (roleFilter !== 'all') {
+      result = result.filter(b => b.role.toLowerCase() === roleFilter.toLowerCase());
+    }
+
+    if (statusFilter === 'top10') {
+      result = result.filter(b => b.rank <= 10);
+    } else if (statusFilter === 'rest') {
+      result = result.filter(b => b.rank > 10);
+    }
+
     if (searchTerm.trim()) {
-      const q = searchTerm.toLowerCase();
-      list = list.filter((b) => b.striker_name.toLowerCase().includes(q));
+      result = result.filter(b => 
+        b.player.toLowerCase().includes(searchTerm.toLowerCase().trim())
+      );
     }
-    if (filterTop10Only) {
-      list = list.filter((b) => (b.rank ?? 999) <= 10);
-    }
-    list.sort((a, b) => {
-      // @ts-expect-error dynamic key access
-      let valA = a[sortField] ?? 0;
-      // @ts-expect-error dynamic key access
-      let valB = b[sortField] ?? 0;
-      if (typeof valA === 'string') valA = valA.toLowerCase();
-      if (typeof valB === 'string') valB = valB.toLowerCase();
-      if (valA < valB) return sortAsc ? -1 : 1;
-      if (valA > valB) return sortAsc ? 1 : -1;
-      return 0;
-    });
-    return list;
-  }, [allBatters, searchTerm, filterTop10Only, sortField, sortAsc]);
 
-  const filteredBowlers = useMemo(() => {
-    let list = [...allBowlers];
+    result.sort((a, b) => {
+      const aVal = (a as unknown as Record<string, unknown>)[sortField] as number ?? 0;
+      const bVal = (b as unknown as Record<string, unknown>)[sortField] as number ?? 0;
+      return sortDirection === 'asc' ? (aVal > bVal ? 1 : -1) : (aVal < bVal ? 1 : -1);
+    });
+
+    return result;
+  }, [v2AllBatters, roleFilter, statusFilter, searchTerm, sortField, sortDirection]);
+
+  // Filtered V2 Bowlers
+  const filteredV2Bowlers = useMemo(() => {
+    let result = [...v2AllBowlers];
+
+    if (roleFilter !== 'all') {
+      result = result.filter(b => b.role.toLowerCase() === roleFilter.toLowerCase());
+    }
+
+    if (statusFilter === 'top10') {
+      result = result.filter(b => b.rank <= 10);
+    } else if (statusFilter === 'rest') {
+      result = result.filter(b => b.rank > 10);
+    }
+
     if (searchTerm.trim()) {
-      const q = searchTerm.toLowerCase();
-      list = list.filter((b) => b.bowler_name.toLowerCase().includes(q));
+      result = result.filter(b => 
+        b.player.toLowerCase().includes(searchTerm.toLowerCase().trim())
+      );
     }
-    if (filterTop10Only) {
-      list = list.filter((b) => (b.rank ?? 999) <= 10);
-    }
-    list.sort((a, b) => {
-      // @ts-expect-error dynamic key access
-      let valA = a[sortField] ?? 0;
-      // @ts-expect-error dynamic key access
-      let valB = b[sortField] ?? 0;
-      if (typeof valA === 'string') valA = valA.toLowerCase();
-      if (typeof valB === 'string') valB = valB.toLowerCase();
-      if (valA < valB) return sortAsc ? -1 : 1;
-      if (valA > valB) return sortAsc ? 1 : -1;
-      return 0;
-    });
-    return list;
-  }, [allBowlers, searchTerm, filterTop10Only, sortField, sortAsc]);
 
-  const handleExportCsv = () => {
-    if (activeTab === 'batters') {
-      downloadCsv('ipl_batter_rankings_all.csv', rawCsvs.allBatters);
-    } else {
-      downloadCsv('ipl_bowler_rankings_all.csv', rawCsvs.allBowlers);
+    result.sort((a, b) => {
+      const aVal = (a as unknown as Record<string, unknown>)[sortField] as number ?? 0;
+      const bVal = (b as unknown as Record<string, unknown>)[sortField] as number ?? 0;
+      return sortDirection === 'asc' ? (aVal > bVal ? 1 : -1) : (aVal < bVal ? 1 : -1);
+    });
+
+    return result;
+  }, [v2AllBowlers, roleFilter, statusFilter, searchTerm, sortField, sortDirection]);
+
+  // Filtered V1 Batters
+  const filteredV1Batters = useMemo(() => {
+    let result = [...v1AllBatters];
+
+    if (statusFilter === 'top10') {
+      result = result.filter(b => (b.rank ?? 0) <= 10);
+    } else if (statusFilter === 'rest') {
+      result = result.filter(b => (b.rank ?? 0) > 10);
     }
-  };
+
+    if (searchTerm.trim()) {
+      result = result.filter(b => 
+        b.striker_name.toLowerCase().includes(searchTerm.toLowerCase().trim())
+      );
+    }
+
+    result.sort((a, b) => {
+      const aVal = (a as unknown as Record<string, unknown>)[sortField] as number ?? 0;
+      const bVal = (b as unknown as Record<string, unknown>)[sortField] as number ?? 0;
+      return sortDirection === 'asc' ? (aVal > bVal ? 1 : -1) : (aVal < bVal ? 1 : -1);
+    });
+
+    return result;
+  }, [v1AllBatters, statusFilter, searchTerm, sortField, sortDirection]);
+
+  // Filtered V1 Bowlers
+  const filteredV1Bowlers = useMemo(() => {
+    let result = [...v1AllBowlers];
+
+    if (statusFilter === 'top10') {
+      result = result.filter(b => (b.rank ?? 0) <= 10);
+    } else if (statusFilter === 'rest') {
+      result = result.filter(b => (b.rank ?? 0) > 10);
+    }
+
+    if (searchTerm.trim()) {
+      result = result.filter(b => 
+        b.bowler_name.toLowerCase().includes(searchTerm.toLowerCase().trim())
+      );
+    }
+
+    result.sort((a, b) => {
+      const aVal = (a as unknown as Record<string, unknown>)[sortField] as number ?? 0;
+      const bVal = (b as unknown as Record<string, unknown>)[sortField] as number ?? 0;
+      return sortDirection === 'asc' ? (aVal > bVal ? 1 : -1) : (aVal < bVal ? 1 : -1);
+    });
+
+    return result;
+  }, [v1AllBowlers, statusFilter, searchTerm, sortField, sortDirection]);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 animate-fadeIn">
       {/* Header */}
-      <div className="bg-white border border-slate-200 rounded-lg p-6 shadow-sm">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
-            <div className="flex items-center space-x-2 text-blue-700 mb-1">
-              <Users className="w-5 h-5" />
-              <span className="text-xs font-bold uppercase tracking-wider">Candidate Pool Explorer</span>
+            <div className="flex items-center space-x-2">
+              <span className="p-1.5 bg-blue-100 text-blue-700 rounded-lg">
+                <Users className="w-5 h-5" />
+              </span>
+              <h2 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
+                Complete Candidate Explorer
+              </h2>
             </div>
-            <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
-              Full Screened Candidate Database
-            </h2>
-            <p className="text-sm text-slate-600 mt-1 max-w-2xl">
-              Complete universe of players meeting IPL 2022–2026 eligibility thresholds. Inspect all 37 qualified batters and 32 qualified bowlers with comprehensive stats, percentiles, and shrinkage factors.
+            <p className="text-xs sm:text-sm text-slate-600 mt-1 max-w-2xl">
+              Inspect the entire qualified player cohort. Filter by role, search players, and distinguish Top 10 selections from the broader eligible candidate pool.
             </p>
           </div>
 
+          {/* Model Toggle */}
+          <div className="flex items-center bg-slate-100 p-1 rounded-lg border border-slate-200 self-start md:self-auto">
+            <button
+              onClick={() => { setModelMode('v2'); setRoleFilter('all'); }}
+              className={`px-3 py-1.5 text-xs font-bold rounded-md transition ${
+                modelMode === 'v2'
+                  ? 'bg-blue-600 text-white shadow-sm'
+                  : 'text-slate-600 hover:text-slate-900'
+              }`}
+            >
+              Model V2 (112 Batters / 129 Bowlers)
+            </button>
+            <button
+              onClick={() => { setModelMode('v1'); setRoleFilter('all'); }}
+              className={`px-3 py-1.5 text-xs font-bold rounded-md transition ${
+                modelMode === 'v1'
+                  ? 'bg-blue-600 text-white shadow-sm'
+                  : 'text-slate-600 hover:text-slate-900'
+              }`}
+            >
+              Model V1 (37 Batters / 32 Bowlers)
+            </button>
+          </div>
+        </div>
+
+        {/* Sub-bar: Discipline Tabs + Export */}
+        <div className="mt-6 pt-4 border-t border-slate-100 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+          <div className="flex items-center space-x-2">
+            <button
+              onClick={() => { setDiscipline('batters'); setRoleFilter('all'); }}
+              className={`px-4 py-2 rounded-lg text-xs font-bold transition flex items-center space-x-2 ${
+                discipline === 'batters'
+                  ? 'bg-slate-900 text-white shadow-sm'
+                  : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+              }`}
+            >
+              <span>Batters Pool</span>
+              <span className="px-1.5 py-0.5 rounded-full text-[10px] bg-slate-800 text-pink-300">
+                {modelMode === 'v2' ? v2AllBatters.length : v1AllBatters.length}
+              </span>
+            </button>
+            <button
+              onClick={() => { setDiscipline('bowlers'); setRoleFilter('all'); }}
+              className={`px-4 py-2 rounded-lg text-xs font-bold transition flex items-center space-x-2 ${
+                discipline === 'bowlers'
+                  ? 'bg-slate-900 text-white shadow-sm'
+                  : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+              }`}
+            >
+              <span>Bowlers Pool</span>
+              <span className="px-1.5 py-0.5 rounded-full text-[10px] bg-slate-800 text-blue-300">
+                {modelMode === 'v2' ? v2AllBowlers.length : v1AllBowlers.length}
+              </span>
+            </button>
+          </div>
+
           <button
-            onClick={handleExportCsv}
-            className="inline-flex items-center space-x-2 px-3.5 py-2 rounded bg-slate-800 hover:bg-slate-700 text-white text-xs font-semibold uppercase tracking-wider shadow-sm transition-colors shrink-0"
+            onClick={() => {
+              if (modelMode === 'v2') {
+                if (discipline === 'batters') downloadCsv('v2_batter_rankings_all.csv', rawCsvs.v2Batters);
+                else downloadCsv('v2_bowler_rankings_all.csv', rawCsvs.v2Bowlers);
+              } else {
+                if (discipline === 'batters') downloadCsv('v1_ipl_batter_rankings_all.csv', rawCsvs.v1Batters);
+                else downloadCsv('v1_ipl_bowler_rankings_all.csv', rawCsvs.v1Bowlers);
+              }
+            }}
+            className="inline-flex items-center justify-center space-x-1.5 text-xs font-bold text-slate-700 hover:text-blue-600 bg-slate-50 border border-slate-200 px-3 py-1.5 rounded-md transition"
           >
-            <Download className="w-3.5 h-3.5 text-blue-300" />
-            <span>Export {activeTab === 'batters' ? 'Batters' : 'Bowlers'} CSV</span>
+            <Download className="w-3.5 h-3.5" />
+            <span>Export Full Cohort CSV</span>
           </button>
         </div>
       </div>
 
-      {/* Tabs */}
-      <div className="flex items-center space-x-2 border-b border-slate-200 pb-2">
-        <button
-          onClick={() => handleTabChange('batters')}
-          className={`flex items-center space-x-2 px-4 py-2 rounded-t-lg font-bold text-xs uppercase tracking-wider transition-colors ${
-            activeTab === 'batters'
-              ? 'bg-white text-blue-700 border-t-2 border-blue-600 shadow-xs'
-              : 'text-slate-500 hover:text-slate-800 hover:bg-slate-100'
-          }`}
-        >
-          <Flame className="w-4 h-4 text-pink-600" />
-          <span>All Eligible Batters ({allBatters.length})</span>
-        </button>
+      {/* Filter & Search Bar */}
+      <div className="bg-white rounded-xl border border-slate-200 p-4 shadow-sm flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
+        <div className="flex flex-wrap items-center gap-2">
+          {/* Status Filter */}
+          <div className="flex items-center space-x-1 bg-slate-100 p-1 rounded-lg text-xs">
+            <button
+              onClick={() => setStatusFilter('all')}
+              className={`px-2.5 py-1 rounded font-medium transition ${
+                statusFilter === 'all' ? 'bg-white text-slate-900 font-bold shadow-xs' : 'text-slate-600'
+              }`}
+            >
+              All Pool
+            </button>
+            <button
+              onClick={() => setStatusFilter('top10')}
+              className={`px-2.5 py-1 rounded font-medium transition ${
+                statusFilter === 'top10' ? 'bg-white text-blue-700 font-bold shadow-xs' : 'text-slate-600'
+              }`}
+            >
+              Top 10 Only
+            </button>
+            <button
+              onClick={() => setStatusFilter('rest')}
+              className={`px-2.5 py-1 rounded font-medium transition ${
+                statusFilter === 'rest' ? 'bg-white text-slate-900 font-bold shadow-xs' : 'text-slate-600'
+              }`}
+            >
+              Beyond Top 10
+            </button>
+          </div>
 
-        <button
-          onClick={() => handleTabChange('bowlers')}
-          className={`flex items-center space-x-2 px-4 py-2 rounded-t-lg font-bold text-xs uppercase tracking-wider transition-colors ${
-            activeTab === 'bowlers'
-              ? 'bg-white text-blue-700 border-t-2 border-blue-600 shadow-xs'
-              : 'text-slate-500 hover:text-slate-800 hover:bg-slate-100'
-          }`}
-        >
-          <Target className="w-4 h-4 text-blue-700" />
-          <span>All Eligible Bowlers ({allBowlers.length})</span>
-        </button>
-      </div>
+          {/* Role Filter (V2 Only) */}
+          {modelMode === 'v2' && (
+            <div className="flex items-center space-x-1 ml-0 sm:ml-2">
+              <span className="text-xs text-slate-500 font-semibold mr-1">Role:</span>
+              {(discipline === 'batters' 
+                ? ['all', 'opener', 'middle order', 'finisher'] 
+                : ['all', 'powerplay', 'middle', 'death']
+              ).map((role) => (
+                <button
+                  key={role}
+                  onClick={() => setRoleFilter(role)}
+                  className={`px-2.5 py-1 text-xs rounded-full capitalize transition ${
+                    roleFilter === role
+                      ? 'bg-blue-600 text-white font-bold'
+                      : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                  }`}
+                >
+                  {role}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
 
-      {/* Controls Bar */}
-      <div className="bg-white border border-slate-200 rounded-lg p-4 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-        <div className="relative flex-1 max-w-sm">
-          <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+        {/* Search Input */}
+        <div className="relative min-w-[240px]">
+          <Search className="w-4 h-4 text-slate-400 absolute left-3 top-2.5" />
           <input
             type="text"
+            placeholder={`Search ${discipline === 'batters' ? 'batters' : 'bowlers'}...`}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            placeholder={`Search ${activeTab === 'batters' ? 'batters' : 'bowlers'} by name...`}
-            className="w-full pl-9 pr-3 py-1.5 rounded bg-slate-50 border border-slate-300 text-xs text-slate-900 focus:outline-none focus:ring-1 focus:ring-blue-500"
+            className="pl-9 pr-3 py-1.5 text-xs rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 w-full"
           />
-        </div>
-
-        <div className="flex flex-wrap items-center gap-3 text-xs">
-          <label className="flex items-center space-x-1.5 text-slate-700 cursor-pointer">
-            <input
-              type="checkbox"
-              checked={filterTop10Only}
-              onChange={(e) => setFilterTop10Only(e.target.checked)}
-              className="rounded text-blue-600 focus:ring-blue-500 h-3.5 w-3.5"
-            />
-            <span className="font-medium">Top 10 Only</span>
-          </label>
-
-          <span className="text-slate-500 font-mono">
-            Showing {activeTab === 'batters' ? filteredBatters.length : filteredBowlers.length} of{' '}
-            {activeTab === 'batters' ? allBatters.length : allBowlers.length} candidates
-          </span>
-
-          <button
-            onClick={resetFilters}
-            className="inline-flex items-center space-x-1 px-2.5 py-1 rounded bg-slate-100 hover:bg-slate-200 text-slate-700 transition-colors font-medium"
-          >
-            <RotateCcw className="w-3 h-3 text-slate-500" />
-            <span>Reset Filters</span>
-          </button>
         </div>
       </div>
 
-      {/* Tables */}
-      {activeTab === 'batters' && (
-        <div className="bg-white border border-slate-200 rounded-lg shadow-sm overflow-hidden">
-          <div className="overflow-x-auto custom-scrollbar">
+      {/* Main Table Display */}
+      <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+        <div className="overflow-x-auto">
+          {modelMode === 'v2' && discipline === 'batters' && (
             <table className="w-full text-left border-collapse text-xs">
               <thead>
-                <tr className="bg-slate-100/80 border-b border-slate-200 text-slate-600 font-semibold uppercase tracking-wider">
-                  <th className="py-3 px-3 w-12 text-center cursor-pointer hover:bg-slate-200/60" onClick={() => handleSort('rank')}>
-                    <div className="flex items-center justify-center space-x-1">
-                      <span>#</span>
-                      <ArrowUpDown className="w-3 h-3" />
-                    </div>
+                <tr className="bg-slate-900 text-white font-mono uppercase tracking-wider text-[11px] select-none">
+                  <th onClick={() => handleSort('rank')} className="py-3 px-3 cursor-pointer hover:bg-slate-800">
+                    <div className="flex items-center space-x-1"><span>Rank</span><ArrowUpDown className="w-3 h-3 text-slate-400" /></div>
                   </th>
-                  <th className="py-3 px-4 cursor-pointer hover:bg-slate-200/60" onClick={() => handleSort('striker_name')}>
-                    <div className="flex items-center space-x-1">
-                      <span>Striker</span>
-                      <ArrowUpDown className="w-3 h-3" />
-                    </div>
+                  <th className="py-3 px-4">Player &amp; Role</th>
+                  <th className="py-3 px-3 text-center">Selection Status</th>
+                  <th onClick={() => handleSort('score')} className="py-3 px-3 text-right cursor-pointer hover:bg-slate-800">
+                    <div className="flex items-center justify-end space-x-1"><span>Score</span><ArrowUpDown className="w-3 h-3 text-slate-400" /></div>
                   </th>
-                  <th className="py-3 px-3 text-right cursor-pointer hover:bg-slate-200/60" onClick={() => handleSort('score')}>
-                    <div className="flex items-center justify-end space-x-1">
-                      <span>Score</span>
-                      <ArrowUpDown className="w-3 h-3 text-blue-600" />
-                    </div>
+                  <th onClick={() => handleSort('hp_runs')} className="py-3 px-3 text-right cursor-pointer hover:bg-slate-800">
+                    <div className="flex items-center justify-end space-x-1"><span>HP Runs (Balls)</span><ArrowUpDown className="w-3 h-3 text-slate-400" /></div>
                   </th>
-                  <th className="py-3 px-3 text-right cursor-pointer hover:bg-slate-200/60" onClick={() => handleSort('hp_runs')}>
-                    <div className="flex items-center justify-end space-x-1">
-                      <span>HP Runs</span>
-                      <ArrowUpDown className="w-3 h-3" />
-                    </div>
+                  <th onClick={() => handleSort('hp_sr')} className="py-3 px-3 text-right cursor-pointer hover:bg-slate-800">
+                    <div className="flex items-center justify-end space-x-1"><span>HP SR</span><ArrowUpDown className="w-3 h-3 text-slate-400" /></div>
                   </th>
-                  <th className="py-3 px-3 text-right cursor-pointer hover:bg-slate-200/60" onClick={() => handleSort('hp_balls')}>
-                    <div className="flex items-center justify-end space-x-1">
-                      <span>HP Balls</span>
-                      <ArrowUpDown className="w-3 h-3" />
-                    </div>
+                  <th onClick={() => handleSort('hp_avg')} className="py-3 px-3 text-right cursor-pointer hover:bg-slate-800">
+                    <div className="flex items-center justify-end space-x-1"><span>HP Avg</span><ArrowUpDown className="w-3 h-3 text-slate-400" /></div>
                   </th>
-                  <th className="py-3 px-3 text-right cursor-pointer hover:bg-slate-200/60" onClick={() => handleSort('hp_sr')}>
-                    <div className="flex items-center justify-end space-x-1">
-                      <span>HP SR</span>
-                      <ArrowUpDown className="w-3 h-3" />
-                    </div>
+                  <th onClick={() => handleSort('sr_retention')} className="py-3 px-3 text-right cursor-pointer hover:bg-slate-800">
+                    <div className="flex items-center justify-end space-x-1"><span>Retention</span><ArrowUpDown className="w-3 h-3 text-slate-400" /></div>
                   </th>
-                  <th className="py-3 px-3 text-right cursor-pointer hover:bg-slate-200/60" onClick={() => handleSort('all_sr')}>
-                    <div className="flex items-center justify-end space-x-1">
-                      <span>All SR</span>
-                      <ArrowUpDown className="w-3 h-3" />
-                    </div>
+                  <th onClick={() => handleSort('reliability')} className="py-3 px-3 text-right cursor-pointer hover:bg-slate-800">
+                    <div className="flex items-center justify-end space-x-1"><span>Reliability</span><ArrowUpDown className="w-3 h-3 text-slate-400" /></div>
                   </th>
-                  <th className="py-3 px-3 text-right cursor-pointer hover:bg-slate-200/60" onClick={() => handleSort('sr_retention')}>
-                    <div className="flex items-center justify-end space-x-1">
-                      <span>Ret %</span>
-                      <ArrowUpDown className="w-3 h-3" />
-                    </div>
-                  </th>
-                  <th className="py-3 px-3 text-right cursor-pointer hover:bg-slate-200/60" onClick={() => handleSort('hp_avg')}>
-                    <div className="flex items-center justify-end space-x-1">
-                      <span>HP Avg</span>
-                      <ArrowUpDown className="w-3 h-3" />
-                    </div>
-                  </th>
-                  <th className="py-3 px-3 text-right cursor-pointer hover:bg-slate-200/60" onClick={() => handleSort('hp_boundary_pct')}>
-                    <div className="flex items-center justify-end space-x-1">
-                      <span>Bound %</span>
-                      <ArrowUpDown className="w-3 h-3" />
-                    </div>
-                  </th>
-                  <th className="py-3 px-3 text-right cursor-pointer hover:bg-slate-200/60" onClick={() => handleSort('hp_dot_pct')}>
-                    <div className="flex items-center justify-end space-x-1">
-                      <span>Dot %</span>
-                      <ArrowUpDown className="w-3 h-3" />
-                    </div>
-                  </th>
-                  <th className="py-3 px-3 text-right cursor-pointer hover:bg-slate-200/60" onClick={() => handleSort('reliability')}>
-                    <div className="flex items-center justify-end space-x-1">
-                      <span>Reliability</span>
-                      <ArrowUpDown className="w-3 h-3" />
-                    </div>
-                  </th>
-                  <th className="py-3 px-3 text-center">Action</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
-                {filteredBatters.map((b) => (
-                  <tr
-                    key={b.striker_id}
-                    onClick={() => onSelectBatter(b)}
-                    className="hover:bg-blue-50/50 cursor-pointer transition-colors group"
-                  >
-                    <td className="py-2.5 px-3 text-center font-mono font-bold text-slate-700">
-                      {b.rank}
-                    </td>
-                    <td className="py-2.5 px-4 font-semibold text-slate-900 group-hover:text-blue-700">
-                      <div className="flex items-center space-x-1.5">
-                        <span>{b.striker_name}</span>
-                        {b.rank && b.rank <= 10 && (
-                          <span className="text-[10px] px-1 py-0.2 rounded bg-pink-100 text-pink-800 font-mono font-bold">
-                            Top 10
+                {filteredV2Batters.map((batter) => {
+                  const isTop10 = batter.rank <= 10;
+                  return (
+                    <tr
+                      key={batter.player_id}
+                      onClick={() => onSelectV2Batter(batter)}
+                      className={`hover:bg-blue-50/60 cursor-pointer transition ${
+                        isTop10 ? 'bg-blue-50/20' : ''
+                      }`}
+                    >
+                      <td className="py-2.5 px-3 font-mono font-bold text-slate-700">
+                        #{batter.rank}
+                      </td>
+                      <td className="py-2.5 px-4">
+                        <div className="font-bold text-slate-900 text-sm flex items-center space-x-1.5">
+                          <span>{batter.player}</span>
+                          {batter.player === 'Virat Kohli' && (
+                            <span className="px-1.5 py-0.2 rounded text-[10px] font-bold bg-amber-100 text-amber-800 border border-amber-300">
+                              AUDIT CASE STUDY
+                            </span>
+                          )}
+                        </div>
+                        <div className="text-[10px] text-slate-500 font-mono">
+                          {batter.role} &bull; Med Order: {batter.med_order} &bull; ID: {batter.player_id}
+                        </div>
+                      </td>
+                      <td className="py-2.5 px-3 text-center">
+                        {isTop10 ? (
+                          <span className="inline-flex items-center space-x-1 px-2 py-0.5 rounded text-[10px] font-bold bg-blue-100 text-blue-800 border border-blue-200">
+                            <Award className="w-3 h-3 text-blue-600" />
+                            <span>TOP 10</span>
+                          </span>
+                        ) : (
+                          <span className="inline-flex items-center space-x-1 px-2 py-0.5 rounded text-[10px] font-medium bg-slate-100 text-slate-600 border border-slate-200">
+                            <span>Candidate</span>
                           </span>
                         )}
-                      </div>
-                    </td>
-                    <td className="py-2.5 px-3 text-right font-mono font-bold text-slate-900 bg-slate-50/50">
-                      {formatNumber(b.score, 2)}
-                    </td>
-                    <td className="py-2.5 px-3 text-right font-mono text-slate-700">{b.hp_runs}</td>
-                    <td className="py-2.5 px-3 text-right font-mono text-slate-700">{b.hp_balls}</td>
-                    <td className="py-2.5 px-3 text-right font-mono font-bold text-slate-900">{formatNumber(b.hp_sr, 1)}</td>
-                    <td className="py-2.5 px-3 text-right font-mono text-slate-500">{formatNumber(b.all_sr, 1)}</td>
-                    <td className="py-2.5 px-3 text-right font-mono">
-                      <span className={b.sr_retention >= 100 ? 'text-emerald-700 font-bold' : 'text-slate-700'}>
-                        {formatNumber(b.sr_retention, 1)}%
-                      </span>
-                    </td>
-                    <td className="py-2.5 px-3 text-right font-mono text-slate-700">{formatNumber(b.hp_avg, 1)}</td>
-                    <td className="py-2.5 px-3 text-right font-mono text-slate-700">{formatPercent(b.hp_boundary_pct, 1)}</td>
-                    <td className="py-2.5 px-3 text-right font-mono text-slate-700">{formatPercent(b.hp_dot_pct, 1)}</td>
-                    <td className="py-2.5 px-3 text-right font-mono text-slate-500">{formatNumber(b.reliability, 3)}</td>
-                    <td className="py-2.5 px-3 text-center">
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          onSelectBatter(b);
-                        }}
-                        className="px-2 py-0.5 rounded bg-slate-100 hover:bg-blue-600 hover:text-white text-slate-700 text-[11px] font-medium transition-colors"
-                      >
-                        Inspect
-                      </button>
-                    </td>
-                  </tr>
-                ))}
+                      </td>
+                      <td className="py-2.5 px-3 text-right font-mono font-extrabold text-blue-700 text-sm">
+                        {formatNumber(batter.score, 2)}
+                      </td>
+                      <td className="py-2.5 px-3 text-right font-mono text-slate-800">
+                        <span className="font-bold">{formatNumber(batter.hp_runs, 0)}</span>
+                        <span className="text-slate-400 text-[11px] ml-1">({batter.hp_balls}b)</span>
+                      </td>
+                      <td className="py-2.5 px-3 text-right font-mono font-bold">
+                        {formatNumber(batter.hp_sr, 2)}
+                      </td>
+                      <td className="py-2.5 px-3 text-right font-mono text-slate-700">
+                        {formatNumber(batter.hp_avg, 2)}
+                      </td>
+                      <td className="py-2.5 px-3 text-right font-mono">
+                        {formatNumber(batter.sr_retention, 1)}%
+                      </td>
+                      <td className="py-2.5 px-3 text-right font-mono text-slate-600">
+                        {formatNumber(batter.reliability, 3)}
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
-          </div>
-        </div>
-      )}
+          )}
 
-      {activeTab === 'bowlers' && (
-        <div className="bg-white border border-slate-200 rounded-lg shadow-sm overflow-hidden">
-          <div className="overflow-x-auto custom-scrollbar">
+          {modelMode === 'v2' && discipline === 'bowlers' && (
             <table className="w-full text-left border-collapse text-xs">
               <thead>
-                <tr className="bg-slate-100/80 border-b border-slate-200 text-slate-600 font-semibold uppercase tracking-wider">
-                  <th className="py-3 px-3 w-12 text-center cursor-pointer hover:bg-slate-200/60" onClick={() => handleSort('rank')}>
-                    <div className="flex items-center justify-center space-x-1">
-                      <span>#</span>
-                      <ArrowUpDown className="w-3 h-3" />
-                    </div>
+                <tr className="bg-slate-900 text-white font-mono uppercase tracking-wider text-[11px] select-none">
+                  <th onClick={() => handleSort('rank')} className="py-3 px-3 cursor-pointer hover:bg-slate-800">
+                    <div className="flex items-center space-x-1"><span>Rank</span><ArrowUpDown className="w-3 h-3 text-slate-400" /></div>
                   </th>
-                  <th className="py-3 px-4 cursor-pointer hover:bg-slate-200/60" onClick={() => handleSort('bowler_name')}>
-                    <div className="flex items-center space-x-1">
-                      <span>Bowler</span>
-                      <ArrowUpDown className="w-3 h-3" />
-                    </div>
+                  <th className="py-3 px-4">Bowler &amp; Phase</th>
+                  <th className="py-3 px-3 text-center">Selection Status</th>
+                  <th onClick={() => handleSort('score')} className="py-3 px-3 text-right cursor-pointer hover:bg-slate-800">
+                    <div className="flex items-center justify-end space-x-1"><span>Score</span><ArrowUpDown className="w-3 h-3 text-slate-400" /></div>
                   </th>
-                  <th className="py-3 px-3 text-right cursor-pointer hover:bg-slate-200/60" onClick={() => handleSort('score')}>
-                    <div className="flex items-center justify-end space-x-1">
-                      <span>Score</span>
-                      <ArrowUpDown className="w-3 h-3 text-blue-600" />
-                    </div>
+                  <th onClick={() => handleSort('runs_saved_per6')} className="py-3 px-3 text-right cursor-pointer hover:bg-slate-800 bg-rose-950/40 text-rose-300">
+                    <div className="flex items-center justify-end space-x-1"><span>Saved/6b</span><ArrowUpDown className="w-3 h-3 text-rose-300" /></div>
                   </th>
-                  <th className="py-3 px-3 text-right cursor-pointer hover:bg-slate-200/60" onClick={() => handleSort('hp_conceded')}>
-                    <div className="flex items-center justify-end space-x-1">
-                      <span>Conceded</span>
-                      <ArrowUpDown className="w-3 h-3" />
-                    </div>
+                  <th onClick={() => handleSort('hp_econ')} className="py-3 px-3 text-right cursor-pointer hover:bg-slate-800">
+                    <div className="flex items-center justify-end space-x-1"><span>HP Econ (Exp)</span><ArrowUpDown className="w-3 h-3 text-slate-400" /></div>
                   </th>
-                  <th className="py-3 px-3 text-right cursor-pointer hover:bg-slate-200/60" onClick={() => handleSort('hp_legal')}>
-                    <div className="flex items-center justify-end space-x-1">
-                      <span>Legal Balls</span>
-                      <ArrowUpDown className="w-3 h-3" />
-                    </div>
+                  <th onClick={() => handleSort('hp_wickets')} className="py-3 px-3 text-right cursor-pointer hover:bg-slate-800">
+                    <div className="flex items-center justify-end space-x-1"><span>HP Wkts (Balls)</span><ArrowUpDown className="w-3 h-3 text-slate-400" /></div>
                   </th>
-                  <th className="py-3 px-3 text-right cursor-pointer hover:bg-slate-200/60" onClick={() => handleSort('hp_econ')}>
-                    <div className="flex items-center justify-end space-x-1">
-                      <span>HP Econ</span>
-                      <ArrowUpDown className="w-3 h-3" />
-                    </div>
+                  <th onClick={() => handleSort('wk_per100')} className="py-3 px-3 text-right cursor-pointer hover:bg-slate-800">
+                    <div className="flex items-center justify-end space-x-1"><span>Wkts/100b</span><ArrowUpDown className="w-3 h-3 text-slate-400" /></div>
                   </th>
-                  <th className="py-3 px-3 text-right cursor-pointer hover:bg-slate-200/60" onClick={() => handleSort('hp_expected_econ')}>
-                    <div className="flex items-center justify-end space-x-1">
-                      <span>Exp Econ</span>
-                      <ArrowUpDown className="w-3 h-3" />
-                    </div>
+                  <th onClick={() => handleSort('reliability')} className="py-3 px-3 text-right cursor-pointer hover:bg-slate-800">
+                    <div className="flex items-center justify-end space-x-1"><span>Reliability</span><ArrowUpDown className="w-3 h-3 text-slate-400" /></div>
                   </th>
-                  <th className="py-3 px-3 text-right cursor-pointer hover:bg-slate-200/60" onClick={() => handleSort('runs_saved_per6')}>
-                    <div className="flex items-center justify-end space-x-1">
-                      <span>Saved/6</span>
-                      <ArrowUpDown className="w-3 h-3 text-amber-600" />
-                    </div>
-                  </th>
-                  <th className="py-3 px-3 text-right cursor-pointer hover:bg-slate-200/60" onClick={() => handleSort('hp_wickets')}>
-                    <div className="flex items-center justify-end space-x-1">
-                      <span>Wkts</span>
-                      <ArrowUpDown className="w-3 h-3" />
-                    </div>
-                  </th>
-                  <th className="py-3 px-3 text-right cursor-pointer hover:bg-slate-200/60" onClick={() => handleSort('hp_dot_pct')}>
-                    <div className="flex items-center justify-end space-x-1">
-                      <span>Dot %</span>
-                      <ArrowUpDown className="w-3 h-3" />
-                    </div>
-                  </th>
-                  <th className="py-3 px-3 text-right cursor-pointer hover:bg-slate-200/60" onClick={() => handleSort('reliability')}>
-                    <div className="flex items-center justify-end space-x-1">
-                      <span>Reliability</span>
-                      <ArrowUpDown className="w-3 h-3" />
-                    </div>
-                  </th>
-                  <th className="py-3 px-3 text-center">Action</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
-                {filteredBowlers.map((b) => (
-                  <tr
-                    key={b.bowler_id}
-                    onClick={() => onSelectBowler(b)}
-                    className="hover:bg-blue-50/50 cursor-pointer transition-colors group"
-                  >
-                    <td className="py-2.5 px-3 text-center font-mono font-bold text-slate-700">
-                      {b.rank}
-                    </td>
-                    <td className="py-2.5 px-4 font-semibold text-slate-900 group-hover:text-blue-700">
-                      <div className="flex items-center space-x-1.5">
-                        <span>{b.bowler_name}</span>
-                        {b.rank && b.rank <= 10 && (
-                          <span className="text-[10px] px-1 py-0.2 rounded bg-blue-100 text-blue-800 font-mono font-bold">
-                            Top 10
+                {filteredV2Bowlers.map((bowler) => {
+                  const isTop10 = bowler.rank <= 10;
+                  return (
+                    <tr
+                      key={bowler.player_id}
+                      onClick={() => onSelectV2Bowler(bowler)}
+                      className={`hover:bg-blue-50/60 cursor-pointer transition ${
+                        isTop10 ? 'bg-blue-50/20' : ''
+                      }`}
+                    >
+                      <td className="py-2.5 px-3 font-mono font-bold text-slate-700">
+                        #{bowler.rank}
+                      </td>
+                      <td className="py-2.5 px-4">
+                        <div className="font-bold text-slate-900 text-sm">{bowler.player}</div>
+                        <div className="text-[10px] text-slate-500 font-mono">
+                          {bowler.role} Phase &bull; ID: {bowler.player_id}
+                        </div>
+                      </td>
+                      <td className="py-2.5 px-3 text-center">
+                        {isTop10 ? (
+                          <span className="inline-flex items-center space-x-1 px-2 py-0.5 rounded text-[10px] font-bold bg-blue-100 text-blue-800 border border-blue-200">
+                            <Award className="w-3 h-3 text-blue-600" />
+                            <span>TOP 10</span>
+                          </span>
+                        ) : (
+                          <span className="inline-flex items-center space-x-1 px-2 py-0.5 rounded text-[10px] font-medium bg-slate-100 text-slate-600 border border-slate-200">
+                            <span>Candidate</span>
                           </span>
                         )}
-                      </div>
-                    </td>
-                    <td className="py-2.5 px-3 text-right font-mono font-bold text-slate-900 bg-slate-50/50">
-                      {formatNumber(b.score, 2)}
-                    </td>
-                    <td className="py-2.5 px-3 text-right font-mono text-slate-700">{b.hp_conceded}</td>
-                    <td className="py-2.5 px-3 text-right font-mono text-slate-700">{b.hp_legal}</td>
-                    <td className="py-2.5 px-3 text-right font-mono font-bold text-slate-900">{formatNumber(b.hp_econ, 2)}</td>
-                    <td className="py-2.5 px-3 text-right font-mono text-blue-700">{formatNumber(b.hp_expected_econ, 2)}</td>
-                    <td className="py-2.5 px-3 text-right font-mono font-bold">
-                      <span className={b.runs_saved_per6 < 0 ? 'text-amber-700' : 'text-slate-700'}>
-                        {formatRunsSaved(b.runs_saved_per6)}
-                      </span>
-                    </td>
-                    <td className="py-2.5 px-3 text-right font-mono text-slate-700">{b.hp_wickets}</td>
-                    <td className="py-2.5 px-3 text-right font-mono text-slate-700">{formatPercent(b.hp_dot_pct, 1)}</td>
-                    <td className="py-2.5 px-3 text-right font-mono text-slate-500">{formatNumber(b.reliability, 3)}</td>
-                    <td className="py-2.5 px-3 text-center">
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          onSelectBowler(b);
-                        }}
-                        className="px-2 py-0.5 rounded bg-slate-100 hover:bg-blue-600 hover:text-white text-slate-700 text-[11px] font-medium transition-colors"
-                      >
-                        Inspect
-                      </button>
-                    </td>
-                  </tr>
-                ))}
+                      </td>
+                      <td className="py-2.5 px-3 text-right font-mono font-extrabold text-blue-700 text-sm">
+                        {formatNumber(bowler.score, 2)}
+                      </td>
+                      <td className="py-2.5 px-3 text-right font-mono font-bold text-rose-700 bg-rose-50/30">
+                        {formatNumber(bowler.runs_saved_per6, 2)}
+                      </td>
+                      <td className="py-2.5 px-3 text-right font-mono text-slate-800">
+                        <span className="font-bold">{formatNumber(bowler.hp_econ, 2)}</span>
+                        <span className="text-slate-400 text-[11px] ml-1">({formatNumber(bowler.expected_econ, 2)})</span>
+                      </td>
+                      <td className="py-2.5 px-3 text-right font-mono text-slate-800">
+                        <span className="font-bold">{bowler.hp_wickets}</span>
+                        <span className="text-slate-400 text-[11px] ml-1">({bowler.hp_legal}b)</span>
+                      </td>
+                      <td className="py-2.5 px-3 text-right font-mono font-bold">
+                        {formatNumber(bowler.wk_per100, 2)}
+                      </td>
+                      <td className="py-2.5 px-3 text-right font-mono text-slate-600">
+                        {formatNumber(bowler.reliability, 3)}
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
-          </div>
+          )}
+
+          {modelMode === 'v1' && discipline === 'batters' && (
+            <table className="w-full text-left border-collapse text-xs">
+              <thead>
+                <tr className="bg-slate-900 text-white font-mono uppercase tracking-wider text-[11px]">
+                  <th className="py-3 px-3">Rank</th>
+                  <th className="py-3 px-4">Player</th>
+                  <th className="py-3 px-3 text-center">Status</th>
+                  <th className="py-3 px-3 text-right">Score</th>
+                  <th className="py-3 px-3 text-right">HP Runs (Balls)</th>
+                  <th className="py-3 px-3 text-right">HP SR</th>
+                  <th className="py-3 px-3 text-right">HP Avg</th>
+                  <th className="py-3 px-3 text-right">SR Retention</th>
+                  <th className="py-3 px-3 text-right">Reliability</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100">
+                {filteredV1Batters.map((batter) => {
+                  const isTop10 = (batter.rank ?? 0) <= 10;
+                  return (
+                    <tr
+                      key={batter.striker_id}
+                      onClick={() => onSelectV1Batter(batter)}
+                      className={`hover:bg-blue-50/60 cursor-pointer transition ${isTop10 ? 'bg-blue-50/20' : ''}`}
+                    >
+                      <td className="py-2.5 px-3 font-mono font-bold text-slate-700">#{batter.rank}</td>
+                      <td className="py-2.5 px-4 font-bold text-slate-900">{batter.striker_name}</td>
+                      <td className="py-2.5 px-3 text-center">
+                        {isTop10 ? (
+                          <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-blue-100 text-blue-800">TOP 10</span>
+                        ) : (
+                          <span className="px-2 py-0.5 rounded text-[10px] bg-slate-100 text-slate-600">Candidate</span>
+                        )}
+                      </td>
+                      <td className="py-2.5 px-3 text-right font-mono font-extrabold text-blue-700">{formatNumber(batter.score, 2)}</td>
+                      <td className="py-2.5 px-3 text-right font-mono text-slate-800">{batter.hp_runs} ({batter.hp_balls}b)</td>
+                      <td className="py-2.5 px-3 text-right font-mono font-bold">{formatNumber(batter.hp_sr, 2)}</td>
+                      <td className="py-2.5 px-3 text-right font-mono">{formatNumber(batter.hp_avg, 2)}</td>
+                      <td className="py-2.5 px-3 text-right font-mono">{formatPercent(batter.sr_retention)}</td>
+                      <td className="py-2.5 px-3 text-right font-mono text-slate-600">{formatNumber(batter.reliability, 3)}</td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          )}
+
+          {modelMode === 'v1' && discipline === 'bowlers' && (
+            <table className="w-full text-left border-collapse text-xs">
+              <thead>
+                <tr className="bg-slate-900 text-white font-mono uppercase tracking-wider text-[11px]">
+                  <th className="py-3 px-3">Rank</th>
+                  <th className="py-3 px-4">Bowler</th>
+                  <th className="py-3 px-3 text-center">Status</th>
+                  <th className="py-3 px-3 text-right">Score</th>
+                  <th className="py-3 px-3 text-right">Saved / 6b</th>
+                  <th className="py-3 px-3 text-right">HP Econ</th>
+                  <th className="py-3 px-3 text-right">HP Wkts (Balls)</th>
+                  <th className="py-3 px-3 text-right">Dot %</th>
+                  <th className="py-3 px-3 text-right">Reliability</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100">
+                {filteredV1Bowlers.map((bowler) => {
+                  const isTop10 = (bowler.rank ?? 0) <= 10;
+                  return (
+                    <tr
+                      key={bowler.bowler_id}
+                      onClick={() => onSelectV1Bowler(bowler)}
+                      className={`hover:bg-blue-50/60 cursor-pointer transition ${isTop10 ? 'bg-blue-50/20' : ''}`}
+                    >
+                      <td className="py-2.5 px-3 font-mono font-bold text-slate-700">#{bowler.rank}</td>
+                      <td className="py-2.5 px-4 font-bold text-slate-900">{bowler.bowler_name}</td>
+                      <td className="py-2.5 px-3 text-center">
+                        {isTop10 ? (
+                          <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-blue-100 text-blue-800">TOP 10</span>
+                        ) : (
+                          <span className="px-2 py-0.5 rounded text-[10px] bg-slate-100 text-slate-600">Candidate</span>
+                        )}
+                      </td>
+                      <td className="py-2.5 px-3 text-right font-mono font-extrabold text-blue-700">{formatNumber(bowler.score, 2)}</td>
+                      <td className="py-2.5 px-3 text-right font-mono font-bold text-rose-700">{formatNumber(bowler.runs_saved_per6, 2)}</td>
+                      <td className="py-2.5 px-3 text-right font-mono font-bold text-slate-900">{formatNumber(bowler.hp_econ, 2)}</td>
+                      <td className="py-2.5 px-3 text-right font-mono text-slate-800">{bowler.hp_wickets} ({bowler.hp_legal}b)</td>
+                      <td className="py-2.5 px-3 text-right font-mono">{formatPercent(bowler.hp_dot_pct)}</td>
+                      <td className="py-2.5 px-3 text-right font-mono text-slate-600">{formatNumber(bowler.reliability, 3)}</td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          )}
         </div>
-      )}
+      </div>
     </div>
   );
 };

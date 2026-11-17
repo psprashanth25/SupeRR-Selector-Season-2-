@@ -4,13 +4,12 @@ import {
   FileText, 
   Flame, 
   ShieldAlert, 
-  Sliders, 
   Users, 
-  CheckCircle2, 
   Menu, 
   X,
   Target,
-  Sparkles
+  GitCompare,
+  UserCheck
 } from 'lucide-react';
 import type { ActiveSection } from '../types/cricket';
 
@@ -23,14 +22,14 @@ export const Navbar: React.FC<NavbarProps> = ({ activeSection, onSelectSection }
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const navItems: Array<{ id: ActiveSection; label: string; icon: React.ReactNode }> = [
-    { id: 'overview', label: 'Overview', icon: <BarChart3 className="w-4 h-4" /> },
-    { id: 'methodology', label: 'Methodology', icon: <FileText className="w-4 h-4" /> },
+    { id: 'overview', label: 'Executive Overview', icon: <BarChart3 className="w-4 h-4" /> },
     { id: 'batters', label: 'Top 10 Batters', icon: <Flame className="w-4 h-4" /> },
     { id: 'bowlers', label: 'Top 10 Bowlers', icon: <Target className="w-4 h-4" /> },
     { id: 'explorer', label: 'Candidate Explorer', icon: <Users className="w-4 h-4" /> },
-    { id: 'sensitivity', label: 'Threshold Sensitivity', icon: <Sliders className="w-4 h-4" /> },
-    { id: 'limitations', label: 'Limitations', icon: <ShieldAlert className="w-4 h-4" /> },
-    { id: 'conclusion', label: 'Conclusion', icon: <CheckCircle2 className="w-4 h-4" /> },
+    { id: 'comparison', label: 'V1 vs V2 Comparison', icon: <GitCompare className="w-4 h-4" /> },
+    { id: 'kohli', label: 'Virat Kohli Audit', icon: <UserCheck className="w-4 h-4" /> },
+    { id: 'methodology', label: 'Methodology', icon: <FileText className="w-4 h-4" /> },
+    { id: 'limitations', label: 'Limitations & Validation', icon: <ShieldAlert className="w-4 h-4" /> },
   ];
 
   const handleNavClick = (id: ActiveSection) => {
@@ -39,7 +38,7 @@ export const Navbar: React.FC<NavbarProps> = ({ activeSection, onSelectSection }
   };
 
   return (
-    <header className="sticky top-0 z-40 bg-navy-900 border-b border-slate-800 text-white shadow-md">
+    <header className="sticky top-0 z-40 bg-slate-900 border-b border-slate-800 text-white shadow-lg">
       {/* Top Banner */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 border-b border-slate-800/80">
@@ -51,32 +50,31 @@ export const Navbar: React.FC<NavbarProps> = ({ activeSection, onSelectSection }
               <div className="flex items-center space-x-2">
                 <span className="font-extrabold text-lg tracking-tight text-white">SUPER RR</span>
                 <span className="text-xs px-2 py-0.5 rounded font-mono font-medium bg-pink-500/10 text-pink-400 border border-pink-500/20">
-                  EXPLORATORY ANALYSIS
+                  V1 &amp; V2 ANALYTICS
                 </span>
               </div>
               <p className="text-xs text-slate-400 hidden sm:block">
-                Pressure Performance Analysis | IPL 2022–2026
+                IPL Pressure Performance Analytics | Seasons 2022–2026 (367 Matches, 87,673 Deliveries)
               </p>
             </div>
           </div>
 
-          <div className="hidden lg:flex items-center space-x-3 text-xs text-slate-300">
-            <div className="flex items-center space-x-1.5 px-2.5 py-1 rounded bg-slate-800/80 border border-slate-700/60 font-mono">
+          <div className="hidden lg:flex items-center space-x-4">
+            <div className="flex items-center space-x-2 text-xs font-medium text-slate-400 bg-slate-800/70 py-1.5 px-3 rounded-lg border border-slate-700/60">
               <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-              <span>Dataset: 367 Matches • 87,673 Balls</span>
-            </div>
-            <div className="flex items-center space-x-1.5 px-2.5 py-1 rounded bg-slate-800/80 border border-slate-700/60 font-mono">
-              <Sparkles className="w-3 h-3 text-amber-400" />
-              <span>Threshold: HP ≥ 65</span>
+              <span>Model V2 Primary (Exploratory)</span>
+              <span className="text-slate-600">|</span>
+              <span className="text-slate-300">V1 Baseline Preserved</span>
             </div>
           </div>
 
-          {/* Mobile hamburger */}
-          <div className="flex lg:hidden">
+          {/* Mobile menu button */}
+          <div className="lg:hidden flex items-center">
             <button
+              type="button"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-2 rounded text-slate-300 hover:text-white hover:bg-slate-800 focus:outline-none"
-              aria-label="Toggle navigation menu"
+              className="p-2 rounded-md text-slate-400 hover:text-white hover:bg-slate-800 focus:outline-none"
+              aria-label="Toggle menu"
             >
               {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>
@@ -84,20 +82,20 @@ export const Navbar: React.FC<NavbarProps> = ({ activeSection, onSelectSection }
         </div>
 
         {/* Desktop Navigation Links */}
-        <nav className="hidden lg:flex items-center space-x-1 py-2 overflow-x-auto custom-scrollbar">
+        <nav className="hidden lg:flex space-x-1 py-2 overflow-x-auto no-scrollbar">
           {navItems.map((item) => {
             const isActive = activeSection === item.id;
             return (
               <button
                 key={item.id}
                 onClick={() => handleNavClick(item.id)}
-                className={`flex items-center space-x-2 px-3 py-1.5 rounded text-xs font-medium tracking-wide transition-colors whitespace-nowrap ${
+                className={`flex items-center space-x-1.5 px-3 py-2 rounded-md text-xs font-medium transition-all whitespace-nowrap ${
                   isActive
-                    ? 'bg-blue-600 text-white font-semibold shadow-sm'
+                    ? 'bg-blue-600 text-white shadow-sm shadow-blue-500/20 font-semibold'
                     : 'text-slate-300 hover:text-white hover:bg-slate-800/70'
                 }`}
               >
-                <span className={isActive ? 'text-pink-300' : 'text-slate-400'}>{item.icon}</span>
+                {item.icon}
                 <span>{item.label}</span>
               </button>
             );
@@ -105,22 +103,22 @@ export const Navbar: React.FC<NavbarProps> = ({ activeSection, onSelectSection }
         </nav>
       </div>
 
-      {/* Mobile Menu Dropdown */}
+      {/* Mobile dropdown menu */}
       {mobileMenuOpen && (
-        <div className="lg:hidden bg-navy-950 border-b border-slate-800 px-4 pt-2 pb-4 space-y-1">
+        <div className="lg:hidden border-t border-slate-800 bg-slate-900 px-4 pt-2 pb-4 space-y-1">
           {navItems.map((item) => {
             const isActive = activeSection === item.id;
             return (
               <button
                 key={item.id}
                 onClick={() => handleNavClick(item.id)}
-                className={`w-full flex items-center space-x-3 px-3 py-2.5 rounded text-sm font-medium ${
+                className={`w-full flex items-center space-x-2 px-3 py-2.5 rounded-md text-sm font-medium transition-colors ${
                   isActive
-                    ? 'bg-blue-600 text-white font-semibold'
-                    : 'text-slate-300 hover:text-white hover:bg-slate-800/80'
+                    ? 'bg-blue-600 text-white'
+                    : 'text-slate-300 hover:text-white hover:bg-slate-800'
                 }`}
               >
-                <span className={isActive ? 'text-pink-300' : 'text-slate-400'}>{item.icon}</span>
+                {item.icon}
                 <span>{item.label}</span>
               </button>
             );

@@ -100,12 +100,88 @@ export interface SummaryJson {
   }>;
 }
 
+// ==========================================
+// V2 DATA STRUCTURES (CONTEXT-NORMALISED MODEL)
+// ==========================================
+
+export interface V2BatterRecord {
+  rank: number;
+  player_id: number;
+  player: string;
+  role: 'Opener' | 'Middle order' | 'Finisher' | string;
+  score: number;
+  hp_runs: number;
+  hp_balls: number;
+  hp_matches: number;
+  hp_sr: number;
+  hp_avg: number;
+  all_sr: number;
+  sr_retention: number;
+  hp_boundary_pct: number;
+  hp_dot_pct: number;
+  all_balls: number;
+  med_order: number;
+  reliability: number;
+}
+
+export interface V2BowlerRecord {
+  rank: number;
+  player_id: number;
+  player: string;
+  role: 'Powerplay' | 'Middle' | 'Death' | string;
+  score: number;
+  hp_conceded: number;
+  hp_legal: number;
+  hp_matches: number;
+  hp_econ: number;
+  expected_econ: number;
+  runs_saved_per6: number;
+  hp_wickets: number;
+  wk_per100: number;
+  hp_dot_pct: number;
+  hp_boundary_pct: number;
+  all_legal: number;
+  reliability: number;
+}
+
+export interface V2ThresholdSensitivityRecord {
+  within_phase_quantile: number;
+  high_pressure_deliveries: number;
+  share_pct: number;
+}
+
+export interface V2ValidationSummary {
+  scope: string;
+  model_v2_pressure_rule: string;
+  batter_role_groups: string;
+  bowler_role_groups: string;
+  eligible_batters_v2: number;
+  eligible_bowlers_v2: number;
+  high_pressure_deliveries_v2: number;
+  virat_kohli_audit: {
+    player: string;
+    role: string;
+    score: number;
+    hp_runs: number;
+    hp_balls: number;
+    hp_matches: number;
+    hp_sr: number;
+    hp_avg: number;
+    all_sr: number;
+    sr_retention: number;
+  };
+  batter_top10_overlap_v1: string[];
+  bowler_top10_overlap_v1: string[];
+  important_caveats: string[];
+}
+
 export type ActiveSection = 
   | 'overview' 
-  | 'methodology' 
   | 'batters' 
   | 'bowlers' 
   | 'explorer' 
-  | 'sensitivity' 
+  | 'comparison'
+  | 'kohli'
+  | 'methodology' 
   | 'limitations' 
-  | 'conclusion';
+  | 'sensitivity';
