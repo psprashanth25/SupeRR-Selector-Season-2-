@@ -5,6 +5,7 @@
 - **GitHub Repository:** `https://github.com/psprashanth25/SupeRR-Selector-Season-2-`
 - **Owner:** `psprashanth25`
 - **Backup Branch:** `backup/current-developed-version`
+- **Backup Commit SHA:** `df94c25712f3d60987411366f4fd2fe571cc66fe`
 - **Base Commit (from origin/main):** `327e9e38c09f99c35d63bdc3f7872cbd12fb38ea`
 
 ---
