@@ -1,17 +1,17 @@
 import { describe, it, expect } from 'vitest';
 import { superRRData } from '../data/superrrLoader';
 
-describe('SUPER RR Data Integrity & Verification Tests', () => {
-  it('should parse summary JSON correctly with exact values', () => {
-    expect(superRRData.summary.scope).toBe('IPL 2022-2026');
-    expect(superRRData.summary.matches).toBe(367);
-    expect(superRRData.summary.deliveries).toBe(87673);
-    expect(superRRData.summary.eligible_batters).toBe(37);
-    expect(superRRData.summary.eligible_bowlers).toBe(32);
+describe('SUPER RR V1 Data Integrity & Verification Tests', () => {
+  it('should parse V1 summary JSON correctly with exact values', () => {
+    expect(superRRData.v1.summary.scope).toBe('IPL 2022-2026');
+    expect(superRRData.v1.summary.matches).toBe(367);
+    expect(superRRData.v1.summary.deliveries).toBe(87673);
+    expect(superRRData.v1.summary.eligible_batters).toBe(37);
+    expect(superRRData.v1.summary.eligible_bowlers).toBe(32);
   });
 
-  it('should contain exactly 10 top batters in the exact supplied ranking order', () => {
-    expect(superRRData.top10Batters.length).toBe(10);
+  it('should contain exactly 10 top batters in the exact supplied V1 ranking order', () => {
+    expect(superRRData.v1.top10Batters.length).toBe(10);
 
     const expectedBatters = [
       { rank: 1, name: 'Abdul Samad', scoreMin: 72.5, scoreMax: 72.6 },
@@ -27,7 +27,7 @@ describe('SUPER RR Data Integrity & Verification Tests', () => {
     ];
 
     expectedBatters.forEach((expected, idx) => {
-      const actual = superRRData.top10Batters[idx];
+      const actual = superRRData.v1.top10Batters[idx];
       expect(actual.rank).toBe(expected.rank);
       expect(actual.striker_name).toBe(expected.name);
       expect(actual.score).toBeGreaterThanOrEqual(expected.scoreMin);
@@ -35,8 +35,8 @@ describe('SUPER RR Data Integrity & Verification Tests', () => {
     });
   });
 
-  it('should contain exactly 10 top bowlers in the exact supplied ranking order', () => {
-    expect(superRRData.top10Bowlers.length).toBe(10);
+  it('should contain exactly 10 top bowlers in the exact supplied V1 ranking order', () => {
+    expect(superRRData.v1.top10Bowlers.length).toBe(10);
 
     const expectedBowlers = [
       { rank: 1, name: 'Mukesh Kumar', scoreMin: 65.4, scoreMax: 65.5 },
@@ -52,7 +52,7 @@ describe('SUPER RR Data Integrity & Verification Tests', () => {
     ];
 
     expectedBowlers.forEach((expected, idx) => {
-      const actual = superRRData.top10Bowlers[idx];
+      const actual = superRRData.v1.top10Bowlers[idx];
       expect(actual.rank).toBe(expected.rank);
       expect(actual.bowler_name).toBe(expected.name);
       expect(actual.score).toBeGreaterThanOrEqual(expected.scoreMin);
@@ -60,44 +60,170 @@ describe('SUPER RR Data Integrity & Verification Tests', () => {
     });
   });
 
-  it('should verify critical analytical finding: all top 10 bowlers have negative runs_saved_per6', () => {
-    superRRData.top10Bowlers.forEach((bowler) => {
-      expect(bowler.runs_saved_per6).toBeLessThan(0);
-      // Actual HP economy must be greater than expected economy
-      expect(bowler.hp_econ).toBeGreaterThan(bowler.hp_expected_econ);
+  it('should load all 37 eligible candidate batters and 32 bowlers in V1', () => {
+    expect(superRRData.v1.allBatters.length).toBe(37);
+    expect(superRRData.v1.allBowlers.length).toBe(32);
+  });
+
+  it('should verify V1 threshold sensitivity dataset values', () => {
+    const v1Sensitivity = superRRData.v1.thresholdSensitivity;
+    expect(v1Sensitivity.length).toBe(3);
+    expect(v1Sensitivity[0]).toEqual({ threshold: 60, batting_high_pressure_deliveries: 7167, bowling_high_pressure_deliveries: 4478 });
+    expect(v1Sensitivity[1]).toEqual({ threshold: 65, batting_high_pressure_deliveries: 5502, bowling_high_pressure_deliveries: 2728 });
+    expect(v1Sensitivity[2]).toEqual({ threshold: 70, batting_high_pressure_deliveries: 4792, bowling_high_pressure_deliveries: 1617 });
+  });
+});
+
+describe('SUPER RR V2 Data Integrity & Analytical Verification Tests', () => {
+  it('should parse V2 summary correctly with exact specifications', () => {
+    expect(superRRData.v2.summary.eligible_batters_v2).toBe(112);
+    expect(superRRData.v2.summary.eligible_bowlers_v2).toBe(129);
+    expect(superRRData.v2.summary.high_pressure_deliveries_v2).toBe(17592);
+  });
+
+  it('should contain exactly 10 top batters in the exact supplied V2 ranking order', () => {
+    expect(superRRData.v2.top10Batters.length).toBe(10);
+
+    const expectedV2Batters = [
+      { rank: 1, name: 'Ishan Kishan', role: 'Opener', scoreMin: 80.8, scoreMax: 80.81 },
+      { rank: 2, name: 'Krunal Pandya', role: 'Middle order', scoreMin: 76.9, scoreMax: 76.97 },
+      { rank: 3, name: 'Shahbaz Ahmed', role: 'Finisher', scoreMin: 76.04, scoreMax: 76.05 },
+      { rank: 4, name: 'Rahul Tewatia', role: 'Finisher', scoreMin: 73.78, scoreMax: 73.79 },
+      { rank: 5, name: 'Devdutt Padikkal', role: 'Middle order', scoreMin: 73.54, scoreMax: 73.55 },
+      { rank: 6, name: 'Wriddhiman Saha', role: 'Opener', scoreMin: 72.45, scoreMax: 72.46 },
+      { rank: 7, name: 'Abhinav Manohar', role: 'Finisher', scoreMin: 71.29, scoreMax: 71.30 },
+      { rank: 8, name: 'Aniket Verma', role: 'Middle order', scoreMin: 70.72, scoreMax: 70.73 },
+      { rank: 9, name: 'Venkatesh Iyer', role: 'Middle order', scoreMin: 70.20, scoreMax: 70.21 },
+      { rank: 10, name: 'Rahul Tripathi', role: 'Middle order', scoreMin: 69.32, scoreMax: 69.33 },
+    ];
+
+    expectedV2Batters.forEach((expected, idx) => {
+      const actual = superRRData.v2.top10Batters[idx];
+      expect(actual.rank).toBe(expected.rank);
+      expect(actual.player).toBe(expected.name);
+      expect(actual.role).toBe(expected.role);
+      expect(actual.score).toBeGreaterThanOrEqual(expected.scoreMin);
+      expect(actual.score).toBeLessThanOrEqual(expected.scoreMax);
     });
   });
 
-  it('should load all 37 eligible candidate batters', () => {
-    expect(superRRData.allBatters.length).toBe(37);
-    expect(superRRData.allBatters[0].striker_name).toBe('Abdul Samad');
-    expect(superRRData.allBatters[36].striker_name).toBe('Rinku Singh');
+  it('should contain exactly 10 top bowlers in the exact supplied V2 ranking order', () => {
+    expect(superRRData.v2.top10Bowlers.length).toBe(10);
+
+    const expectedV2Bowlers = [
+      { rank: 1, name: 'Shahbaz Ahmed', role: 'Middle', scoreMin: 77.94, scoreMax: 77.96 },
+      { rank: 2, name: 'Romario Shepherd', role: 'Middle', scoreMin: 74.07, scoreMax: 74.08 },
+      { rank: 3, name: 'Shivang Kumar', role: 'Middle', scoreMin: 73.43, scoreMax: 73.44 },
+      { rank: 4, name: 'Washington Sundar', role: 'Middle', scoreMin: 71.10, scoreMax: 71.11 },
+      { rank: 5, name: 'Ishant Sharma', role: 'Powerplay', scoreMin: 70.86, scoreMax: 70.87 },
+      { rank: 6, name: 'Avesh Khan', role: 'Death', scoreMin: 70.72, scoreMax: 70.73 },
+      { rank: 7, name: 'Mukesh Kumar', role: 'Powerplay', scoreMin: 69.31, scoreMax: 69.32 },
+      { rank: 8, name: 'Mayank Markande', role: 'Middle', scoreMin: 69.11, scoreMax: 69.12 },
+      { rank: 9, name: 'Chris Jordan', role: 'Death', scoreMin: 67.63, scoreMax: 67.64 },
+      { rank: 10, name: 'Mitchell Marsh', role: 'Middle', scoreMin: 67.44, scoreMax: 67.45 },
+    ];
+
+    expectedV2Bowlers.forEach((expected, idx) => {
+      const actual = superRRData.v2.top10Bowlers[idx];
+      expect(actual.rank).toBe(expected.rank);
+      expect(actual.player).toBe(expected.name);
+      expect(actual.role).toBe(expected.role);
+      expect(actual.score).toBeGreaterThanOrEqual(expected.scoreMin);
+      expect(actual.score).toBeLessThanOrEqual(expected.scoreMax);
+    });
   });
 
-  it('should load all 32 eligible candidate bowlers', () => {
-    expect(superRRData.allBowlers.length).toBe(32);
-    expect(superRRData.allBowlers[0].bowler_name).toBe('Mukesh Kumar');
-    expect(superRRData.allBowlers[31].bowler_name).toBe('Sunil Narine');
+  it('should verify critical bowling finding: all 10 V2 top bowlers have negative runs_saved_per6', () => {
+    const expectedRunsSaved = [
+      { name: 'Shahbaz Ahmed', val: -2.26 },
+      { name: 'Romario Shepherd', val: -4.21 },
+      { name: 'Shivang Kumar', val: -3.61 },
+      { name: 'Washington Sundar', val: -1.53 },
+      { name: 'Ishant Sharma', val: -2.40 },
+      { name: 'Avesh Khan', val: -0.08 },
+      { name: 'Mukesh Kumar', val: -2.59 },
+      { name: 'Mayank Markande', val: -1.88 },
+      { name: 'Chris Jordan', val: -0.87 },
+      { name: 'Mitchell Marsh', val: -3.86 },
+    ];
+
+    superRRData.v2.top10Bowlers.forEach((bowler, idx) => {
+      expect(bowler.runs_saved_per6).toBeLessThan(0);
+      expect(Number(bowler.runs_saved_per6.toFixed(2))).toBe(expectedRunsSaved[idx].val);
+    });
   });
 
-  it('should load threshold sensitivity records accurately', () => {
-    expect(superRRData.thresholdSensitivity.length).toBe(3);
-    
-    const t60 = superRRData.thresholdSensitivity.find((t) => t.threshold === 60);
-    expect(t60?.batting_high_pressure_deliveries).toBe(7167);
-    expect(t60?.bowling_high_pressure_deliveries).toBe(4478);
+  it('should verify low reliability bowler examples in V2', () => {
+    const marsh = superRRData.v2.top10Bowlers.find(b => b.player === 'Mitchell Marsh');
+    const jordan = superRRData.v2.top10Bowlers.find(b => b.player === 'Chris Jordan');
+    const shivang = superRRData.v2.top10Bowlers.find(b => b.player === 'Shivang Kumar');
 
-    const t65 = superRRData.thresholdSensitivity.find((t) => t.threshold === 65);
-    expect(t65?.batting_high_pressure_deliveries).toBe(5502);
-    expect(t65?.bowling_high_pressure_deliveries).toBe(2728);
-
-    const t70 = superRRData.thresholdSensitivity.find((t) => t.threshold === 70);
-    expect(t70?.batting_high_pressure_deliveries).toBe(4792);
-    expect(t70?.bowling_high_pressure_deliveries).toBe(1617);
+    expect(Number(marsh?.reliability.toFixed(2))).toBe(0.36);
+    expect(Number(jordan?.reliability.toFixed(2))).toBe(0.48);
+    expect(Number(shivang?.reliability.toFixed(2))).toBe(0.55);
   });
 
-  it('should contain original methodology text without fabrication', () => {
-    expect(superRRData.methodologyRaw).toContain('Phase 7 — IPL 2022–2026 exploratory shortlist');
-    expect(superRRData.methodologyRaw).toContain('All top-10 bowlers in the current shortlist have negative runs-saved-per-six values');
+  it('should load full candidate explorer pools with exact counts', () => {
+    expect(superRRData.v2.allBatters.length).toBe(112);
+    expect(superRRData.v2.allBowlers.length).toBe(129);
+  });
+
+  it('should verify Virat Kohli audit case study values exactly', () => {
+    const kohli = superRRData.v2.allBatters.find(b => b.player === 'Virat Kohli');
+    expect(kohli).toBeDefined();
+    expect(kohli?.rank).toBe(95);
+    expect(kohli?.role).toBe('Opener');
+    expect(kohli?.hp_runs).toBe(195);
+    expect(kohli?.hp_balls).toBe(127);
+    expect(kohli?.hp_matches).toBe(34);
+    expect(Number(kohli?.hp_sr.toFixed(2))).toBe(153.54);
+    expect(kohli?.hp_avg).toBe(32.5);
+    expect(Number(kohli?.all_sr.toFixed(2))).toBe(146.03);
+    expect(Number(kohli?.sr_retention.toFixed(2))).toBe(105.15);
+    expect(Number(kohli?.score.toFixed(2))).toBe(35.01);
+  });
+
+  it('should verify V1 vs V2 top-10 overlap is exactly 2 players each', () => {
+    const v1BatterNames = superRRData.v1.top10Batters.map(b => b.striker_name);
+    const v2BatterNames = superRRData.v2.top10Batters.map(b => b.player);
+    const batterOverlap = v2BatterNames.filter(name => v1BatterNames.includes(name));
+
+    expect(batterOverlap).toEqual(['Krunal Pandya', 'Shahbaz Ahmed']);
+    expect(batterOverlap.length).toBe(2);
+
+    const v1BowlerNames = superRRData.v1.top10Bowlers.map(b => b.bowler_name);
+    const v2BowlerNames = superRRData.v2.top10Bowlers.map(b => b.player);
+    const bowlerOverlap = v2BowlerNames.filter(name => v1BowlerNames.includes(name));
+
+    expect(bowlerOverlap).toEqual(['Shahbaz Ahmed', 'Mukesh Kumar']);
+    expect(bowlerOverlap.length).toBe(2);
+  });
+
+  it('should verify V2 threshold sensitivity dataset values', () => {
+    const sensitivity = superRRData.v2.thresholdSensitivity;
+    expect(sensitivity.length).toBe(5);
+
+    expect(sensitivity[0]).toEqual({ within_phase_quantile: 0.6, high_pressure_deliveries: 20940, share_pct: 23.88 });
+    expect(sensitivity[1]).toEqual({ within_phase_quantile: 0.65, high_pressure_deliveries: 19564, share_pct: 22.31 });
+    expect(sensitivity[2]).toEqual({ within_phase_quantile: 0.7, high_pressure_deliveries: 17592, share_pct: 20.07 });
+    expect(sensitivity[3]).toEqual({ within_phase_quantile: 0.75, high_pressure_deliveries: 15577, share_pct: 17.77 });
+    expect(sensitivity[4]).toEqual({ within_phase_quantile: 0.8, high_pressure_deliveries: 13927, share_pct: 15.89 });
+  });
+
+  it('should ensure no duplicate players and no NaN scores exist across top 10 rankings', () => {
+    const v1Batters = superRRData.v1.top10Batters.map(b => b.striker_name);
+    const v1Bowlers = superRRData.v1.top10Bowlers.map(b => b.bowler_name);
+    const v2Batters = superRRData.v2.top10Batters.map(b => b.player);
+    const v2Bowlers = superRRData.v2.top10Bowlers.map(b => b.player);
+
+    expect(new Set(v1Batters).size).toBe(10);
+    expect(new Set(v1Bowlers).size).toBe(10);
+    expect(new Set(v2Batters).size).toBe(10);
+    expect(new Set(v2Bowlers).size).toBe(10);
+
+    superRRData.v2.top10Batters.forEach(b => expect(Number.isNaN(b.score)).toBe(false));
+    superRRData.v2.top10Bowlers.forEach(b => expect(Number.isNaN(b.score)).toBe(false));
+    superRRData.v1.top10Batters.forEach(b => expect(Number.isNaN(b.score)).toBe(false));
+    superRRData.v1.top10Bowlers.forEach(b => expect(Number.isNaN(b.score)).toBe(false));
   });
 });

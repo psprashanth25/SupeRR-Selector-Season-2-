@@ -1,0 +1,241 @@
+{
+  "scope": "IPL 2022-2026",
+  "matches": 367,
+  "deliveries": 87673,
+  "eligible_batters": 37,
+  "eligible_bowlers": 32,
+  "top_batters": [
+    {
+      "striker_name": "Abdul Samad",
+      "score": 72.59,
+      "hp_runs": 131,
+      "hp_balls": 101,
+      "hp_matches": 8,
+      "hp_sr": 129.7,
+      "hp_avg": 21.83,
+      "all_sr": 149.76,
+      "sr_retention": 86.6
+    },
+    {
+      "striker_name": "Krunal Pandya",
+      "score": 71.2,
+      "hp_runs": 64,
+      "hp_balls": 55,
+      "hp_matches": 8,
+      "hp_sr": 116.36,
+      "hp_avg": 10.67,
+      "all_sr": 127.9,
+      "sr_retention": 90.98
+    },
+    {
+      "striker_name": "Lalit Yadav",
+      "score": 67.44,
+      "hp_runs": 62,
+      "hp_balls": 52,
+      "hp_matches": 7,
+      "hp_sr": 119.23,
+      "hp_avg": 8.86,
+      "all_sr": 109.22,
+      "sr_retention": 109.17
+    },
+    {
+      "striker_name": "Axar Patel",
+      "score": 65.36,
+      "hp_runs": 126,
+      "hp_balls": 86,
+      "hp_matches": 12,
+      "hp_sr": 146.51,
+      "hp_avg": 15.75,
+      "all_sr": 141.82,
+      "sr_retention": 103.31
+    },
+    {
+      "striker_name": "Kieron Pollard",
+      "score": 65.0,
+      "hp_runs": 43,
+      "hp_balls": 37,
+      "hp_matches": 4,
+      "hp_sr": 116.22,
+      "hp_avg": 10.75,
+      "all_sr": 107.46,
+      "sr_retention": 108.15
+    },
+    {
+      "striker_name": "Andre Russell",
+      "score": 64.25,
+      "hp_runs": 73,
+      "hp_balls": 47,
+      "hp_matches": 7,
+      "hp_sr": 155.32,
+      "hp_avg": 12.17,
+      "all_sr": 166.84,
+      "sr_retention": 93.09
+    },
+    {
+      "striker_name": "Romario Shepherd",
+      "score": 64.22,
+      "hp_runs": 49,
+      "hp_balls": 34,
+      "hp_matches": 6,
+      "hp_sr": 144.12,
+      "hp_avg": 12.25,
+      "all_sr": 175.16,
+      "sr_retention": 82.28
+    },
+    {
+      "striker_name": "Shahbaz Ahmed",
+      "score": 61.08,
+      "hp_runs": 61,
+      "hp_balls": 46,
+      "hp_matches": 6,
+      "hp_sr": 132.61,
+      "hp_avg": 20.33,
+      "all_sr": 124.83,
+      "sr_retention": 106.23
+    },
+    {
+      "striker_name": "Rovman Powell",
+      "score": 60.89,
+      "hp_runs": 135,
+      "hp_balls": 85,
+      "hp_matches": 10,
+      "hp_sr": 158.82,
+      "hp_avg": 22.5,
+      "all_sr": 142.31,
+      "sr_retention": 111.61
+    },
+    {
+      "striker_name": "Suryakumar Yadav",
+      "score": 57.55,
+      "hp_runs": 32,
+      "hp_balls": 20,
+      "hp_matches": 7,
+      "hp_sr": 160.0,
+      "hp_avg": 6.4,
+      "all_sr": 164.95,
+      "sr_retention": 97.0
+    }
+  ],
+  "top_bowlers": [
+    {
+      "bowler_name": "Mukesh Kumar",
+      "score": 65.46,
+      "hp_conceded": 92,
+      "hp_legal": 43,
+      "hp_matches": 9,
+      "hp_econ": 12.84,
+      "hp_expected_econ": 8.9,
+      "runs_saved_per6": -3.94,
+      "hp_wk_per100": 0.0,
+      "hp_dot_pct": 27.91
+    },
+    {
+      "bowler_name": "Jasprit Bumrah",
+      "score": 63.02,
+      "hp_conceded": 111,
+      "hp_legal": 62,
+      "hp_matches": 6,
+      "hp_econ": 10.74,
+      "hp_expected_econ": 8.97,
+      "runs_saved_per6": -1.77,
+      "hp_wk_per100": 0.0,
+      "hp_dot_pct": 30.65
+    },
+    {
+      "bowler_name": "Deepak Chahar",
+      "score": 61.8,
+      "hp_conceded": 87,
+      "hp_legal": 35,
+      "hp_matches": 7,
+      "hp_econ": 14.91,
+      "hp_expected_econ": 9.7,
+      "runs_saved_per6": -5.21,
+      "hp_wk_per100": 5.71,
+      "hp_dot_pct": 25.71
+    },
+    {
+      "bowler_name": "Shardul Thakur",
+      "score": 61.21,
+      "hp_conceded": 81,
+      "hp_legal": 38,
+      "hp_matches": 7,
+      "hp_econ": 12.79,
+      "hp_expected_econ": 9.76,
+      "runs_saved_per6": -3.03,
+      "hp_wk_per100": 2.63,
+      "hp_dot_pct": 26.32
+    },
+    {
+      "bowler_name": "Harshal Patel",
+      "score": 60.98,
+      "hp_conceded": 84,
+      "hp_legal": 32,
+      "hp_matches": 6,
+      "hp_econ": 15.75,
+      "hp_expected_econ": 10.6,
+      "runs_saved_per6": -5.15,
+      "hp_wk_per100": 6.25,
+      "hp_dot_pct": 15.62
+    },
+    {
+      "bowler_name": "Marco Jansen",
+      "score": 59.13,
+      "hp_conceded": 91,
+      "hp_legal": 41,
+      "hp_matches": 7,
+      "hp_econ": 13.32,
+      "hp_expected_econ": 9.1,
+      "runs_saved_per6": -4.22,
+      "hp_wk_per100": 2.44,
+      "hp_dot_pct": 39.02
+    },
+    {
+      "bowler_name": "Shahbaz Ahmed",
+      "score": 57.1,
+      "hp_conceded": 55,
+      "hp_legal": 24,
+      "hp_matches": 4,
+      "hp_econ": 13.75,
+      "hp_expected_econ": 8.72,
+      "runs_saved_per6": -5.03,
+      "hp_wk_per100": 8.33,
+      "hp_dot_pct": 20.83
+    },
+    {
+      "bowler_name": "T Natarajan",
+      "score": 56.88,
+      "hp_conceded": 66,
+      "hp_legal": 33,
+      "hp_matches": 7,
+      "hp_econ": 12.0,
+      "hp_expected_econ": 10.05,
+      "runs_saved_per6": -1.95,
+      "hp_wk_per100": 3.03,
+      "hp_dot_pct": 33.33
+    },
+    {
+      "bowler_name": "Arshdeep Singh",
+      "score": 56.81,
+      "hp_conceded": 109,
+      "hp_legal": 57,
+      "hp_matches": 18,
+      "hp_econ": 11.47,
+      "hp_expected_econ": 9.79,
+      "runs_saved_per6": -1.68,
+      "hp_wk_per100": 1.75,
+      "hp_dot_pct": 45.61
+    },
+    {
+      "bowler_name": "Auqib Nabi",
+      "score": 56.42,
+      "hp_conceded": 51,
+      "hp_legal": 26,
+      "hp_matches": 4,
+      "hp_econ": 11.77,
+      "hp_expected_econ": 10.22,
+      "runs_saved_per6": -1.54,
+      "hp_wk_per100": 0.0,
+      "hp_dot_pct": 34.62
+    }
+  ]
+}

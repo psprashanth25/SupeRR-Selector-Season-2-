@@ -2,139 +2,148 @@ import React from 'react';
 import { 
   ShieldAlert, 
   AlertTriangle, 
-  Database, 
-  History, 
-  Briefcase, 
-  Scale, 
-  Layers,
-  FileCheck
+  CheckCircle2, 
+  Layers, 
+  TrendingDown, 
+  FileSearch,
+  Sliders
 } from 'lucide-react';
 
 export const LimitationsSection: React.FC = () => {
-  const limitations = [
-    {
-      id: 1,
-      title: 'Exploratory & Provisional Nature',
-      icon: <AlertTriangle className="w-5 h-5 text-amber-600" />,
-      tag: 'Methodology Status',
-      desc: 'These rankings represent an exploratory data science exercise conducted on the supplied dataset for the Unstop SuperRR Selector challenge. They are provisional analytical shortlists rather than officially validated, boardroom-ready selection decisions.',
-    },
-    {
-      id: 2,
-      title: 'Relative Within-Pool Standing vs Absolute Clutch Mastery',
-      icon: <Scale className="w-5 h-5 text-blue-700" />,
-      tag: 'Metric Interpretation',
-      desc: 'All composite scores are constructed using within-pool percentiles relative to the 37 eligible batters and 32 eligible bowlers. A high score signifies that a player performed well relative to the screened candidates, not that they possess infallible pressure composure.',
-    },
-    {
-      id: 3,
-      title: 'Sample Size Asymmetries Across Candidates',
-      icon: <Layers className="w-5 h-5 text-indigo-600" />,
-      tag: 'Statistical Variance',
-      desc: 'Eligible candidates feature substantial sample disparities. For instance, Abdul Samad faced 101 high-pressure balls across 8 matches, whereas Suryakumar Yadav faced 20 balls across 7 matches. While Empirical Bayes shrinkage dampens small-sample inflation, sample variance remains present.',
-    },
-    {
-      id: 4,
-      title: 'Small Bowling Delivery Volumes',
-      icon: <Database className="w-5 h-5 text-rose-600" />,
-      tag: 'Data Scarcity',
-      desc: 'High-pressure bowling deliveries are structurally scarce. At threshold 65, only 2,728 bowling deliveries exist across 367 matches (~7.4 balls per match). Several top bowlers qualified with only 24 to 35 high-pressure balls, making bowling ranks more sensitive to boundary clustering.',
-    },
-    {
-      id: 5,
-      title: 'Universal Negative Contextual Runs Saved',
-      icon: <ShieldAlert className="w-5 h-5 text-amber-600" />,
-      tag: 'Critical Finding',
-      desc: 'Every single bowler in the exploratory top 10 conceded more runs than the model’s empirical expected baseline in high-pressure deliveries (runs saved/6 ranges from -1.54 to -5.21). Bowlers are being ranked on how well they mitigated damage relative to peers, not on absolute run denial.',
-    },
-    {
-      id: 6,
-      title: 'Data Dictionary & Edge-Case Validation Needed',
-      icon: <FileCheck className="w-5 h-5 text-emerald-700" />,
-      tag: 'Data Governance',
-      desc: 'Before any formal presentation, key edge cases require validation against the organiser’s data dictionary: wicket attribution (ensuring run-outs and retired hurts are not credited to bowlers), extras classification (byes/leg-byes attribution), and exact match phase timestamping.',
-    },
-    {
-      id: 7,
-      title: 'Non-Predictive Historical Retrospective',
-      icon: <History className="w-5 h-5 text-slate-700" />,
-      tag: 'Forecasting Boundary',
-      desc: 'This dashboard is a retrospective descriptive analysis of observed IPL 2022–2026 performance. It does not model aging curves, fitness trajectory, role changes, venue transitions, or predict performance in future IPL seasons.',
-    },
-    {
-      id: 8,
-      title: 'Not an Auction Purchasing Strategy',
-      icon: <Briefcase className="w-5 h-5 text-blue-700" />,
-      tag: 'Franchise Mandate',
-      desc: 'This analysis intentionally does not incorporate player salaries, auction purses, squad balance, overseas slots, or retention rules. Retired players like Kieron Pollard remain in the analytical tables to preserve historical data integrity. It is strictly an evaluation of cricket pressure data science.',
-    },
-  ];
-
   return (
-    <div className="space-y-8">
-      {/* Header */}
-      <div className="bg-white border border-slate-200 rounded-lg p-6 shadow-sm">
-        <div className="flex items-center space-x-2 text-amber-700 mb-1">
-          <ShieldAlert className="w-5 h-5" />
-          <span className="text-xs font-bold uppercase tracking-wider">Analytical Integrity</span>
+    <div className="space-y-8 animate-fadeIn">
+      {/* Header Banner */}
+      <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
+        <div className="flex items-center space-x-2">
+          <span className="p-1.5 bg-rose-100 text-rose-700 rounded-lg">
+            <ShieldAlert className="w-5 h-5" />
+          </span>
+          <h2 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
+            Limitations, Model Sensitivity &amp; Validation Review
+          </h2>
         </div>
-        <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
-          Limitations, Boundary Conditions & Validation Requirements
-        </h2>
-        <p className="text-sm text-slate-600 mt-1 max-w-3xl leading-relaxed">
-          High-quality sports analytics requires radical transparency about what data can and cannot prove. The following eight critical constraints define the scope, boundaries, and validation needs of this study.
+        <p className="text-xs sm:text-sm text-slate-600 mt-1 max-w-3xl leading-relaxed">
+          Transparent analytical disclosure for the Rajasthan Royals technical panel. 
+          Neither Model V1 nor Model V2 is claimed to be an infallible or fully validated truth. 
+          The findings demonstrate how model specifications shape conclusions.
         </p>
       </div>
 
-      {/* Limitations Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-        {limitations.map((item) => (
-          <div 
-            key={item.id}
-            className="bg-white border border-slate-200 rounded-lg p-5 shadow-sm space-y-3 hover:border-slate-300 transition-colors"
-          >
-            <div className="flex items-center justify-between border-b border-slate-100 pb-2.5">
-              <div className="flex items-center space-x-2.5">
-                <div className="p-1.5 rounded bg-slate-50 border border-slate-200">
-                  {item.icon}
-                </div>
-                <h3 className="font-bold text-slate-900 text-sm">
-                  {item.title}
-                </h3>
-              </div>
-              <span className="text-[10px] font-mono font-semibold px-2 py-0.5 rounded bg-slate-100 text-slate-600 uppercase">
-                {item.tag}
-              </span>
-            </div>
-            <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-              {item.desc}
-            </p>
+      {/* Grid of Key Limitations */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {/* Limitation 1: Exploratory Nature */}
+        <div className="bg-white rounded-xl border border-slate-200 p-5 shadow-sm space-y-2.5">
+          <div className="flex items-center space-x-2 text-rose-600 font-bold text-xs uppercase tracking-wider">
+            <AlertTriangle className="w-4 h-4" />
+            <span>1. V2 Is Exploratory, Not Objectively Superior</span>
           </div>
-        ))}
+          <h3 className="text-sm font-bold text-slate-900">
+            Sensitivity Alternative Rather Than Proven Upgrade
+          </h3>
+          <p className="text-xs text-slate-600 leading-relaxed">
+            While Model V2 addresses V1’s inability to capture early-phase pressure, the comparison does 
+            <strong> not establish that V2 is objectively superior</strong>. Both models present defensible perspectives, 
+            and their 80% turnover (only 2 overlapping players in each discipline) underscores that rankings are 
+            fundamentally sensitive to mathematical definitions rather than absolute underlying player quality.
+          </p>
+        </div>
+
+        {/* Limitation 2: Negative Bowling Runs Saved */}
+        <div className="bg-rose-50 border-2 border-rose-300 rounded-xl p-5 shadow-sm space-y-2.5">
+          <div className="flex items-center space-x-2 text-rose-700 font-bold text-xs uppercase tracking-wider">
+            <ShieldAlert className="w-4 h-4" />
+            <span>2. Critical Interpretability Failure in Bowling</span>
+          </div>
+          <h3 className="text-sm font-bold text-rose-950">
+            All 10 Top Bowlers Conceded Above Contextual Baselines
+          </h3>
+          <p className="text-xs text-rose-900 leading-relaxed">
+            All 10 V2 top-ranked bowlers have negative runs-saved-per-six values (from -0.08 to -4.21). 
+            They conceded more runs than an average bowler in identical match states. 
+            Their high rankings are an artifact of <strong>relative percentiles within phase cohorts</strong>, 
+            not evidence of objective run containment. This remains a major interpretability caveat before adopting V2.
+          </p>
+        </div>
+
+        {/* Limitation 3: Percentile Thresholds != Equal Difficulty */}
+        <div className="bg-white rounded-xl border border-slate-200 p-5 shadow-sm space-y-2.5">
+          <div className="flex items-center space-x-2 text-slate-700 font-bold text-xs uppercase tracking-wider">
+            <Sliders className="w-4 h-4 text-blue-600" />
+            <span>3. Percentile Balancing vs Psychological Reality</span>
+          </div>
+          <h3 className="text-sm font-bold text-slate-900">
+            Mathematical Balance Does Not Equal Real-World Difficulty
+          </h3>
+          <p className="text-xs text-slate-600 leading-relaxed">
+            Using phase-specific 70th percentile cutoffs ensures that 20% of deliveries in each phase are classified as pressure. 
+            However, this mathematical balance does not prove that facing Jasprit Bumrah in the 19th over with 20 needed off 6 
+            is psychologically or tactically equivalent to facing the 3rd over of a run chase with 2 wickets down.
+          </p>
+        </div>
+
+        {/* Limitation 4: Role Approximations */}
+        <div className="bg-white rounded-xl border border-slate-200 p-5 shadow-sm space-y-2.5">
+          <div className="flex items-center space-x-2 text-slate-700 font-bold text-xs uppercase tracking-wider">
+            <Layers className="w-4 h-4 text-blue-600" />
+            <span>4. Role Categorisation Approximations</span>
+          </div>
+          <h3 className="text-sm font-bold text-slate-900">
+            Median Order and Predominant Phase Blur Dynamics
+          </h3>
+          <p className="text-xs text-slate-600 leading-relaxed">
+            Median batting order simplifies dynamic tactical deployments (pinch hitters, floaters, injury shifts). 
+            Similarly, predominant bowling phase obscures multi-phase bowlers (e.g., pacers who bowl 2 overs in the Powerplay 
+            and 2 at the Death). An all-phase bowler assigned to Powerplay is evaluated against specialists.
+          </p>
+        </div>
+
+        {/* Limitation 5: Low Sample Reliability */}
+        <div className="bg-white rounded-xl border border-slate-200 p-5 shadow-sm space-y-2.5">
+          <div className="flex items-center space-x-2 text-amber-600 font-bold text-xs uppercase tracking-wider">
+            <TrendingDown className="w-4 h-4" />
+            <span>5. Persistent Low Sample Sizes</span>
+          </div>
+          <h3 className="text-sm font-bold text-slate-900">
+            Minimum Ball Filters Do Not Guarantee Stability
+          </h3>
+          <p className="text-xs text-slate-600 leading-relaxed">
+            Despite eligibility floors (24–30 balls), several top-ten bowlers possess low reliability coefficients: 
+            <strong> Mitchell Marsh (0.36)</strong>, <strong>Chris Jordan (0.48)</strong>, and <strong>Shivang Kumar (0.55)</strong>. 
+            One anomalous over can swing a player's composite score significantly at these sample levels.
+          </p>
+        </div>
+
+        {/* Limitation 6: Unperformed Validation Checks */}
+        <div className="bg-white rounded-xl border border-slate-200 p-5 shadow-sm space-y-2.5">
+          <div className="flex items-center space-x-2 text-slate-700 font-bold text-xs uppercase tracking-wider">
+            <FileSearch className="w-4 h-4 text-pink-600" />
+            <span>6. Required Next Steps Before Production Adoption</span>
+          </div>
+          <h3 className="text-sm font-bold text-slate-900">
+            Season-Level, Bootstrap, &amp; Extras Auditing Still Required
+          </h3>
+          <p className="text-xs text-slate-600 leading-relaxed">
+            Before deploying these models for franchise decision-making, the following checks remain necessary: 
+            (a) Season-by-season rank stability to detect multi-year consistency; 
+            (b) Leave-one-season-out cross-validation; 
+            (c) Match-level bootstrap resampling; and 
+            (d) Detailed audit of extras attribution (byes vs wides) and run-out credit in the raw feeds.
+          </p>
+        </div>
       </div>
 
-      {/* Validation Checklist Box */}
-      <div className="bg-navy-900 border border-slate-800 rounded-lg p-6 text-white shadow-sm space-y-4">
-        <div className="flex items-center space-x-2 text-pink-400">
-          <FileCheck className="w-5 h-5" />
-          <h3 className="text-sm font-bold uppercase tracking-wider text-white">
-            Pre-Submission Technical Validation Checklist
-          </h3>
-        </div>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs font-mono text-slate-300">
-          <div className="p-3 bg-slate-800/80 border border-slate-700 rounded space-y-1">
-            <div className="text-pink-300 font-bold">1. Wicket Disambiguation</div>
-            <p className="text-slate-400 font-sans text-xs">Verify run outs, obstruction, and retired outs are excluded from bowler wicket tallies.</p>
-          </div>
-          <div className="p-3 bg-slate-800/80 border border-slate-700 rounded space-y-1">
-            <div className="text-pink-300 font-bold">2. Extras Attribution</div>
-            <p className="text-slate-400 font-sans text-xs">Confirm leg-byes and byes are credited against team totals rather than bowler runs conceded.</p>
-          </div>
-          <div className="p-3 bg-slate-800/80 border border-slate-700 rounded space-y-1">
-            <div className="text-pink-300 font-bold">3. Pressure Calibration</div>
-            <p className="text-slate-400 font-sans text-xs">Compare sensitivity thresholds against competition organizers' specific criteria.</p>
-          </div>
-        </div>
+      {/* Strategic Recommendation */}
+      <div className="bg-slate-900 text-white p-6 rounded-xl border border-slate-800 shadow-lg">
+        <h3 className="text-base font-bold text-white mb-2 flex items-center space-x-2">
+          <CheckCircle2 className="w-5 h-5 text-emerald-400" />
+          <span>Analytical Recommendation for SuperRR Challenge Submission</span>
+        </h3>
+        <p className="text-xs sm:text-sm text-slate-300 leading-relaxed max-w-3xl">
+          We recommend submitting both <strong>Model V1 and Model V2 as dual sensitivity alternatives</strong>. 
+          Transparently presenting both models, highlighting their low overlap, explaining the Virat Kohli case study, 
+          and honestly reporting the negative bowling runs-saved values demonstrates far higher analytical maturity and sports science rigor 
+          than pretending either single model is flawless.
+        </p>
       </div>
     </div>
   );

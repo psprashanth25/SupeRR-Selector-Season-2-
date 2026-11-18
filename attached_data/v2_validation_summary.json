@@ -1,0 +1,38 @@
+{
+  "scope": "IPL 2022-2026; innings 1 and 2; 367 matches; 87,673 delivery rows",
+  "model_v2_pressure_rule": "Pressure score is built from pre-delivery scoring stress versus empirical expected scoring, wickets already lost, and match phase. A phase- and innings-specific 70th percentile cutoff is used, with a floor of 35, to avoid applying one absolute threshold to every phase.",
+  "batter_role_groups": "Opener (median batting order 1-2), Middle order (3-5), Finisher (6-7)",
+  "bowler_role_groups": "Predominant legal-ball phase: Powerplay, Middle, or Death",
+  "eligible_batters_v2": 112,
+  "eligible_bowlers_v2": 129,
+  "high_pressure_deliveries_v2": 17592,
+  "virat_kohli_audit": {
+    "player": "Virat Kohli",
+    "role": "Opener",
+    "score": 35.013016136873304,
+    "hp_runs": 195.0,
+    "hp_balls": 127.0,
+    "hp_matches": 34.0,
+    "hp_sr": 153.54330708661416,
+    "hp_avg": 32.5,
+    "all_sr": 146.0287081339713,
+    "sr_retention": 105.14597372576134
+  },
+  "batter_top10_overlap_v1": [
+    "Krunal Pandya",
+    "Shahbaz Ahmed"
+  ],
+  "bowler_top10_overlap_v1": [
+    "Mukesh Kumar",
+    "Shahbaz Ahmed"
+  ],
+  "important_caveats": [
+    "V2 is a sensitivity/alternative model, not yet established as superior to V1.",
+    "The phase-specific percentile pressure threshold makes the number of high-pressure balls more balanced across phases but does not prove that all selected states are equally difficult.",
+    "Batter role is approximated using median batting order; players can perform multiple roles.",
+    "Bowler role is approximated using predominant phase of legal deliveries; specialist and multi-phase roles may be misclassified.",
+    "Composite scores are relative within role groups and are not probabilities.",
+    "The current V2 bowler top 10 still includes negative runs-saved-per-six values; negative values must be shown honestly.",
+    "Need additional match-level validation and sensitivity checks before selecting V2 as final."
+  ]
+}

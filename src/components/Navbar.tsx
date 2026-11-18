@@ -1,16 +1,17 @@
 import React, { useState } from 'react';
-import { 
-  BarChart3, 
-  FileText, 
-  Flame, 
-  ShieldAlert, 
-  Sliders, 
-  Users, 
-  CheckCircle2, 
-  Menu, 
+import {
+  BarChart3,
+  FileText,
+  Flame,
+  ShieldAlert,
+  Users,
+  Menu,
   X,
   Target,
-  Sparkles
+  GitCompare,
+  UserCheck,
+  History,
+  CheckCircle2
 } from 'lucide-react';
 import type { ActiveSection } from '../types/cricket';
 
@@ -23,14 +24,16 @@ export const Navbar: React.FC<NavbarProps> = ({ activeSection, onSelectSection }
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const navItems: Array<{ id: ActiveSection; label: string; icon: React.ReactNode }> = [
-    { id: 'overview', label: 'Overview', icon: <BarChart3 className="w-4 h-4" /> },
-    { id: 'methodology', label: 'Methodology', icon: <FileText className="w-4 h-4" /> },
-    { id: 'batters', label: 'Top 10 Batters', icon: <Flame className="w-4 h-4" /> },
-    { id: 'bowlers', label: 'Top 10 Bowlers', icon: <Target className="w-4 h-4" /> },
-    { id: 'explorer', label: 'Candidate Explorer', icon: <Users className="w-4 h-4" /> },
-    { id: 'sensitivity', label: 'Threshold Sensitivity', icon: <Sliders className="w-4 h-4" /> },
-    { id: 'limitations', label: 'Limitations', icon: <ShieldAlert className="w-4 h-4" /> },
-    { id: 'conclusion', label: 'Conclusion', icon: <CheckCircle2 className="w-4 h-4" /> },
+    { id: 'overview', label: '1. Overview', icon: <BarChart3 className="w-3.5 h-3.5" /> },
+    { id: 'batters', label: '2. V2 Batters', icon: <Flame className="w-3.5 h-3.5 text-pink-400" /> },
+    { id: 'bowlers', label: '3. V2 Bowlers', icon: <Target className="w-3.5 h-3.5 text-blue-400" /> },
+    { id: 'v1-baseline', label: '4. V1 Baseline', icon: <History className="w-3.5 h-3.5 text-slate-300" /> },
+    { id: 'comparison', label: '5. Comparison', icon: <GitCompare className="w-3.5 h-3.5 text-purple-400" /> },
+    { id: 'explorer', label: '6. Explorer', icon: <Users className="w-3.5 h-3.5 text-cyan-400" /> },
+    { id: 'kohli', label: '7. Kohli Audit', icon: <UserCheck className="w-3.5 h-3.5 text-amber-400" /> },
+    { id: 'methodology', label: '8. Methodology', icon: <FileText className="w-3.5 h-3.5 text-emerald-400" /> },
+    { id: 'limitations', label: '9. Limitations', icon: <ShieldAlert className="w-3.5 h-3.5 text-rose-400" /> },
+    { id: 'conclusion', label: '10. Conclusion', icon: <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" /> },
   ];
 
   const handleNavClick = (id: ActiveSection) => {
@@ -39,44 +42,43 @@ export const Navbar: React.FC<NavbarProps> = ({ activeSection, onSelectSection }
   };
 
   return (
-    <header className="sticky top-0 z-40 bg-navy-900 border-b border-slate-800 text-white shadow-md">
+    <header className="sticky top-0 z-40 bg-slate-900 border-b border-slate-800 text-white shadow-lg">
       {/* Top Banner */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 border-b border-slate-800/80">
           <div className="flex items-center space-x-3">
-            <div className="flex items-center justify-center w-9 h-9 rounded bg-blue-700 text-white font-black text-sm tracking-widest border border-blue-500 shadow-sm">
+            <div className="flex items-center justify-center w-9 h-9 rounded bg-blue-700 text-white font-black text-sm tracking-widest border border-blue-500 shadow-sm font-mono">
               RR
             </div>
             <div>
               <div className="flex items-center space-x-2">
                 <span className="font-extrabold text-lg tracking-tight text-white">SUPER RR</span>
                 <span className="text-xs px-2 py-0.5 rounded font-mono font-medium bg-pink-500/10 text-pink-400 border border-pink-500/20">
-                  EXPLORATORY ANALYSIS
+                  SEASON 2 FINAL SUBMISSION
                 </span>
               </div>
               <p className="text-xs text-slate-400 hidden sm:block">
-                Pressure Performance Analysis | IPL 2022–2026
+                IPL Pressure Performance Analytics | Seasons 2022–2026 (367 Matches, 87,673 Deliveries)
               </p>
             </div>
           </div>
 
-          <div className="hidden lg:flex items-center space-x-3 text-xs text-slate-300">
-            <div className="flex items-center space-x-1.5 px-2.5 py-1 rounded bg-slate-800/80 border border-slate-700/60 font-mono">
-              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-              <span>Dataset: 367 Matches • 87,673 Balls</span>
-            </div>
-            <div className="flex items-center space-x-1.5 px-2.5 py-1 rounded bg-slate-800/80 border border-slate-700/60 font-mono">
-              <Sparkles className="w-3 h-3 text-amber-400" />
-              <span>Threshold: HP ≥ 65</span>
+          <div className="hidden xl:flex items-center space-x-3">
+            <div className="flex items-center space-x-2 text-xs font-medium text-slate-400 bg-slate-800/80 py-1.5 px-3 rounded-lg border border-slate-700/60">
+              <span className="w-2 h-2 rounded-full bg-emerald-400"></span>
+              <span>Model V2 (Context-Normalised)</span>
+              <span className="text-slate-600">|</span>
+              <span className="text-slate-300">Model V1 (Fixed-Threshold)</span>
             </div>
           </div>
 
-          {/* Mobile hamburger */}
-          <div className="flex lg:hidden">
+          {/* Mobile menu button */}
+          <div className="lg:hidden flex items-center">
             <button
+              type="button"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-2 rounded text-slate-300 hover:text-white hover:bg-slate-800 focus:outline-none"
-              aria-label="Toggle navigation menu"
+              className="p-2 rounded-md text-slate-400 hover:text-white hover:bg-slate-800 focus:outline-none"
+              aria-label="Toggle menu"
             >
               {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>
@@ -84,20 +86,19 @@ export const Navbar: React.FC<NavbarProps> = ({ activeSection, onSelectSection }
         </div>
 
         {/* Desktop Navigation Links */}
-        <nav className="hidden lg:flex items-center space-x-1 py-2 overflow-x-auto custom-scrollbar">
+        <nav className="hidden lg:flex space-x-1 py-2 overflow-x-auto no-scrollbar">
           {navItems.map((item) => {
             const isActive = activeSection === item.id;
             return (
               <button
                 key={item.id}
                 onClick={() => handleNavClick(item.id)}
-                className={`flex items-center space-x-2 px-3 py-1.5 rounded text-xs font-medium tracking-wide transition-colors whitespace-nowrap ${
-                  isActive
-                    ? 'bg-blue-600 text-white font-semibold shadow-sm'
+                className={`flex items-center space-x-1 px-2.5 py-1.5 rounded-md text-xs font-medium transition-all whitespace-nowrap ${isActive
+                    ? 'bg-blue-600 text-white shadow-sm shadow-blue-500/20 font-bold'
                     : 'text-slate-300 hover:text-white hover:bg-slate-800/70'
-                }`}
+                  }`}
               >
-                <span className={isActive ? 'text-pink-300' : 'text-slate-400'}>{item.icon}</span>
+                {item.icon}
                 <span>{item.label}</span>
               </button>
             );
@@ -105,22 +106,21 @@ export const Navbar: React.FC<NavbarProps> = ({ activeSection, onSelectSection }
         </nav>
       </div>
 
-      {/* Mobile Menu Dropdown */}
+      {/* Mobile dropdown menu */}
       {mobileMenuOpen && (
-        <div className="lg:hidden bg-navy-950 border-b border-slate-800 px-4 pt-2 pb-4 space-y-1">
+        <div className="lg:hidden border-t border-slate-800 bg-slate-900 px-4 pt-2 pb-4 space-y-1 max-h-[80vh] overflow-y-auto">
           {navItems.map((item) => {
             const isActive = activeSection === item.id;
             return (
               <button
                 key={item.id}
                 onClick={() => handleNavClick(item.id)}
-                className={`w-full flex items-center space-x-3 px-3 py-2.5 rounded text-sm font-medium ${
-                  isActive
-                    ? 'bg-blue-600 text-white font-semibold'
-                    : 'text-slate-300 hover:text-white hover:bg-slate-800/80'
-                }`}
+                className={`w-full flex items-center space-x-2 px-3 py-2.5 rounded-md text-sm font-medium transition-colors ${isActive
+                    ? 'bg-blue-600 text-white font-bold'
+                    : 'text-slate-300 hover:text-white hover:bg-slate-800'
+                  }`}
               >
-                <span className={isActive ? 'text-pink-300' : 'text-slate-400'}>{item.icon}</span>
+                {item.icon}
                 <span>{item.label}</span>
               </button>
             );
