@@ -176,12 +176,14 @@ export interface V2ValidationSummary {
 }
 
 export type ActiveSection = 
-  | 'overview' 
-  | 'batters' 
-  | 'bowlers' 
-  | 'explorer' 
-  | 'comparison'
-  | 'kohli'
-  | 'methodology' 
-  | 'limitations' 
+  | 'overview'       // Page 1: Executive Overview
+  | 'batters'        // Page 2: V2 Batter Analysis
+  | 'bowlers'        // Page 3: V2 Bowler Analysis
+  | 'v1-baseline'    // Page 4: V1 Baseline Results
+  | 'comparison'     // Page 5: Model Comparison
+  | 'explorer'       // Page 6: Player Explorer
+  | 'kohli'          // Page 7: Virat Kohli Case Study
+  | 'methodology'    // Page 8: Methodology
+  | 'limitations'    // Page 9: Validation & Limitations
+  | 'conclusion'     // Page 10: Final Analytical Conclusion
   | 'sensitivity';

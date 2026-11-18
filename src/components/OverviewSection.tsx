@@ -7,9 +7,11 @@ import {
   ArrowRight, 
   GitCompare, 
   UserCheck, 
-  Layers,
-  Database,
-  Users
+  Layers, 
+  Database, 
+  Users, 
+  History, 
+  CheckCircle2 
 } from 'lucide-react';
 import type { 
   ActiveSection, 
@@ -69,40 +71,54 @@ export const OverviewSection: React.FC<OverviewSectionProps> = ({
           <div className="flex flex-wrap gap-2.5 pt-2">
             <button
               onClick={() => onNavigate('batters')}
-              className="inline-flex items-center space-x-2 bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-lg text-xs font-bold transition shadow-sm"
+              className="inline-flex items-center space-x-1.5 bg-blue-600 hover:bg-blue-500 text-white px-3.5 py-1.5 rounded-lg text-xs font-bold transition shadow-sm"
             >
               <Flame className="w-3.5 h-3.5" />
               <span>V2 Top 10 Batters</span>
-              <ArrowRight className="w-3.5 h-3.5" />
+              <ArrowRight className="w-3 h-3" />
             </button>
             <button
               onClick={() => onNavigate('bowlers')}
-              className="inline-flex items-center space-x-2 bg-blue-900/80 hover:bg-blue-800 text-blue-200 border border-blue-700/60 px-4 py-2 rounded-lg text-xs font-bold transition"
+              className="inline-flex items-center space-x-1.5 bg-blue-900/80 hover:bg-blue-800 text-blue-200 border border-blue-700/60 px-3.5 py-1.5 rounded-lg text-xs font-bold transition"
             >
               <Target className="w-3.5 h-3.5" />
               <span>V2 Top 10 Bowlers</span>
-              <ArrowRight className="w-3.5 h-3.5" />
+              <ArrowRight className="w-3 h-3" />
+            </button>
+            <button
+              onClick={() => onNavigate('v1-baseline')}
+              className="inline-flex items-center space-x-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 px-3.5 py-1.5 rounded-lg text-xs font-semibold transition"
+            >
+              <History className="w-3.5 h-3.5 text-slate-300" />
+              <span>V1 Baseline Results</span>
             </button>
             <button
               onClick={() => onNavigate('comparison')}
-              className="inline-flex items-center space-x-2 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 px-4 py-2 rounded-lg text-xs font-semibold transition"
+              className="inline-flex items-center space-x-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 px-3.5 py-1.5 rounded-lg text-xs font-semibold transition"
             >
               <GitCompare className="w-3.5 h-3.5 text-pink-400" />
               <span>V1 vs V2 Comparison</span>
             </button>
             <button
               onClick={() => onNavigate('kohli')}
-              className="inline-flex items-center space-x-2 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 px-4 py-2 rounded-lg text-xs font-semibold transition"
+              className="inline-flex items-center space-x-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 px-3.5 py-1.5 rounded-lg text-xs font-semibold transition"
             >
               <UserCheck className="w-3.5 h-3.5 text-amber-400" />
               <span>Virat Kohli Audit</span>
             </button>
             <button
               onClick={() => onNavigate('explorer')}
-              className="inline-flex items-center space-x-2 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 px-4 py-2 rounded-lg text-xs font-semibold transition"
+              className="inline-flex items-center space-x-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 px-3.5 py-1.5 rounded-lg text-xs font-semibold transition"
             >
               <Database className="w-3.5 h-3.5 text-cyan-400" />
-              <span>Candidate Explorer (112 Batters / 129 Bowlers)</span>
+              <span>Candidate Explorer</span>
+            </button>
+            <button
+              onClick={() => onNavigate('conclusion')}
+              className="inline-flex items-center space-x-1.5 bg-emerald-950/80 hover:bg-emerald-900 text-emerald-200 border border-emerald-700/60 px-3.5 py-1.5 rounded-lg text-xs font-semibold transition"
+            >
+              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+              <span>Conclusion &amp; Synthesis</span>
             </button>
           </div>
         </div>
@@ -269,13 +285,22 @@ export const OverviewSection: React.FC<OverviewSectionProps> = ({
 
           <div className="border-t border-slate-100 pt-3 flex items-center justify-between">
             <span className="text-xs text-slate-500">Top Rankers: Abdul Samad (Bat) / Mukesh Kumar (Bowl)</span>
-            <button
-              onClick={() => onNavigate('comparison')}
-              className="text-xs font-bold text-slate-700 hover:text-slate-900 inline-flex items-center space-x-1"
-            >
-              <span>Compare Models</span>
-              <ArrowRight className="w-3.5 h-3.5" />
-            </button>
+            <div className="flex items-center space-x-3">
+              <button
+                onClick={() => onNavigate('v1-baseline')}
+                className="text-xs font-bold text-blue-600 hover:text-blue-800 inline-flex items-center space-x-1"
+              >
+                <span>View V1 Baseline</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </button>
+              <button
+                onClick={() => onNavigate('comparison')}
+                className="text-xs font-bold text-slate-700 hover:text-slate-900 inline-flex items-center space-x-1"
+              >
+                <span>Compare</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </button>
+            </div>
           </div>
         </div>
       </div>

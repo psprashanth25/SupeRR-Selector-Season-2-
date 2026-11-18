@@ -64,6 +64,14 @@ describe('SUPER RR V1 Data Integrity & Verification Tests', () => {
     expect(superRRData.v1.allBatters.length).toBe(37);
     expect(superRRData.v1.allBowlers.length).toBe(32);
   });
+
+  it('should verify V1 threshold sensitivity dataset values', () => {
+    const v1Sensitivity = superRRData.v1.thresholdSensitivity;
+    expect(v1Sensitivity.length).toBe(3);
+    expect(v1Sensitivity[0]).toEqual({ threshold: 60, batting_high_pressure_deliveries: 7167, bowling_high_pressure_deliveries: 4478 });
+    expect(v1Sensitivity[1]).toEqual({ threshold: 65, batting_high_pressure_deliveries: 5502, bowling_high_pressure_deliveries: 2728 });
+    expect(v1Sensitivity[2]).toEqual({ threshold: 70, batting_high_pressure_deliveries: 4792, bowling_high_pressure_deliveries: 1617 });
+  });
 });
 
 describe('SUPER RR V2 Data Integrity & Analytical Verification Tests', () => {
@@ -200,5 +208,22 @@ describe('SUPER RR V2 Data Integrity & Analytical Verification Tests', () => {
     expect(sensitivity[2]).toEqual({ within_phase_quantile: 0.7, high_pressure_deliveries: 17592, share_pct: 20.07 });
     expect(sensitivity[3]).toEqual({ within_phase_quantile: 0.75, high_pressure_deliveries: 15577, share_pct: 17.77 });
     expect(sensitivity[4]).toEqual({ within_phase_quantile: 0.8, high_pressure_deliveries: 13927, share_pct: 15.89 });
+  });
+
+  it('should ensure no duplicate players and no NaN scores exist across top 10 rankings', () => {
+    const v1Batters = superRRData.v1.top10Batters.map(b => b.striker_name);
+    const v1Bowlers = superRRData.v1.top10Bowlers.map(b => b.bowler_name);
+    const v2Batters = superRRData.v2.top10Batters.map(b => b.player);
+    const v2Bowlers = superRRData.v2.top10Bowlers.map(b => b.player);
+
+    expect(new Set(v1Batters).size).toBe(10);
+    expect(new Set(v1Bowlers).size).toBe(10);
+    expect(new Set(v2Batters).size).toBe(10);
+    expect(new Set(v2Bowlers).size).toBe(10);
+
+    superRRData.v2.top10Batters.forEach(b => expect(Number.isNaN(b.score)).toBe(false));
+    superRRData.v2.top10Bowlers.forEach(b => expect(Number.isNaN(b.score)).toBe(false));
+    superRRData.v1.top10Batters.forEach(b => expect(Number.isNaN(b.score)).toBe(false));
+    superRRData.v1.top10Bowlers.forEach(b => expect(Number.isNaN(b.score)).toBe(false));
   });
 });

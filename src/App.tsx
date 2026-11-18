@@ -4,11 +4,13 @@ import { Navbar } from './components/Navbar';
 import { OverviewSection } from './components/OverviewSection';
 import { BatterLeaderboardSection } from './components/BatterLeaderboardSection';
 import { BowlerLeaderboardSection } from './components/BowlerLeaderboardSection';
-import { CandidateExplorerSection } from './components/CandidateExplorerSection';
+import { V1BaselineSection } from './components/V1BaselineSection';
 import { ModelComparisonSection } from './components/ModelComparisonSection';
+import { CandidateExplorerSection } from './components/CandidateExplorerSection';
 import { ViratKohliAuditSection } from './components/ViratKohliAuditSection';
 import { MethodologySection } from './components/MethodologySection';
 import { LimitationsSection } from './components/LimitationsSection';
+import { ConclusionSection } from './components/ConclusionSection';
 import { PlayerDetailModal, type AnyPlayerRecord } from './components/PlayerDetailModal';
 import { Footer } from './components/Footer';
 
@@ -61,6 +63,7 @@ export function App() {
 
       {/* Main Content Container */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Page 1: Executive Overview */}
         {activeSection === 'overview' && (
           <OverviewSection
             v2Summary={superRRData.v2.summary}
@@ -72,6 +75,7 @@ export function App() {
           />
         )}
 
+        {/* Page 2: V2 Top 10 Batters */}
         {activeSection === 'batters' && (
           <BatterLeaderboardSection
             v2Batters={superRRData.v2.top10Batters}
@@ -83,6 +87,7 @@ export function App() {
           />
         )}
 
+        {/* Page 3: V2 Top 10 Bowlers */}
         {activeSection === 'bowlers' && (
           <BowlerLeaderboardSection
             v2Bowlers={superRRData.v2.top10Bowlers}
@@ -94,6 +99,31 @@ export function App() {
           />
         )}
 
+        {/* Page 4: V1 Baseline Results */}
+        {activeSection === 'v1-baseline' && (
+          <V1BaselineSection
+            v1Batters={superRRData.v1.top10Batters}
+            v1Bowlers={superRRData.v1.top10Bowlers}
+            rawBattersCsv={superRRData.v1.rawCsvs.top10Batters}
+            rawBowlersCsv={superRRData.v1.rawCsvs.top10Bowlers}
+            onSelectBatter={handleSelectV1Batter}
+            onSelectBowler={handleSelectV1Bowler}
+          />
+        )}
+
+        {/* Page 5: Model Comparison */}
+        {activeSection === 'comparison' && (
+          <ModelComparisonSection
+            v2Batters={superRRData.v2.top10Batters}
+            v2Bowlers={superRRData.v2.top10Bowlers}
+            v1Batters={superRRData.v1.top10Batters}
+            v1Bowlers={superRRData.v1.top10Bowlers}
+            v2Sensitivity={superRRData.v2.thresholdSensitivity}
+            v1Sensitivity={superRRData.v1.thresholdSensitivity}
+          />
+        )}
+
+        {/* Page 6: Full Candidate Explorer */}
         {activeSection === 'explorer' && (
           <CandidateExplorerSection
             v2AllBatters={superRRData.v2.allBatters}
@@ -113,17 +143,7 @@ export function App() {
           />
         )}
 
-        {activeSection === 'comparison' && (
-          <ModelComparisonSection
-            v2Batters={superRRData.v2.top10Batters}
-            v2Bowlers={superRRData.v2.top10Bowlers}
-            v1Batters={superRRData.v1.top10Batters}
-            v1Bowlers={superRRData.v1.top10Bowlers}
-            v2Sensitivity={superRRData.v2.thresholdSensitivity}
-            v1Sensitivity={superRRData.v1.thresholdSensitivity}
-          />
-        )}
-
+        {/* Page 7: Virat Kohli Audit Case Study */}
         {activeSection === 'kohli' && (
           <ViratKohliAuditSection
             auditData={superRRData.v2.summary.virat_kohli_audit}
@@ -131,12 +151,19 @@ export function App() {
           />
         )}
 
+        {/* Page 8: Methodology */}
         {activeSection === 'methodology' && (
           <MethodologySection />
         )}
 
+        {/* Page 9: Validation & Limitations */}
         {activeSection === 'limitations' && (
           <LimitationsSection />
+        )}
+
+        {/* Page 10: Final Analytical Conclusion */}
+        {activeSection === 'conclusion' && (
+          <ConclusionSection onNavigate={handleNavigate} />
         )}
       </main>
 

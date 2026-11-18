@@ -22,15 +22,17 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
             </div>
           </div>
 
-          <div className="flex flex-wrap gap-4 text-xs font-medium text-slate-300">
-            <button onClick={() => onNavigate('overview')} className="hover:text-white transition-colors">Overview</button>
-            <button onClick={() => onNavigate('batters')} className="hover:text-white transition-colors">Batters</button>
-            <button onClick={() => onNavigate('bowlers')} className="hover:text-white transition-colors">Bowlers</button>
-            <button onClick={() => onNavigate('explorer')} className="hover:text-white transition-colors">Candidate Explorer</button>
-            <button onClick={() => onNavigate('comparison')} className="hover:text-white transition-colors">Model Comparison</button>
-            <button onClick={() => onNavigate('kohli')} className="hover:text-white transition-colors">Kohli Audit</button>
-            <button onClick={() => onNavigate('methodology')} className="hover:text-white transition-colors">Methodology</button>
-            <button onClick={() => onNavigate('limitations')} className="hover:text-white transition-colors">Limitations</button>
+          <div className="flex flex-wrap gap-3 text-xs font-medium text-slate-300">
+            <button onClick={() => onNavigate('overview')} className="hover:text-white transition-colors">1. Overview</button>
+            <button onClick={() => onNavigate('batters')} className="hover:text-white transition-colors">2. V2 Batters</button>
+            <button onClick={() => onNavigate('bowlers')} className="hover:text-white transition-colors">3. V2 Bowlers</button>
+            <button onClick={() => onNavigate('v1-baseline')} className="hover:text-white transition-colors">4. V1 Baseline</button>
+            <button onClick={() => onNavigate('comparison')} className="hover:text-white transition-colors">5. Comparison</button>
+            <button onClick={() => onNavigate('explorer')} className="hover:text-white transition-colors">6. Explorer</button>
+            <button onClick={() => onNavigate('kohli')} className="hover:text-white transition-colors">7. Kohli Audit</button>
+            <button onClick={() => onNavigate('methodology')} className="hover:text-white transition-colors">8. Methodology</button>
+            <button onClick={() => onNavigate('limitations')} className="hover:text-white transition-colors">9. Limitations</button>
+            <button onClick={() => onNavigate('conclusion')} className="hover:text-white transition-colors text-emerald-400 font-bold">10. Conclusion</button>
           </div>
         </div>
 
@@ -39,7 +41,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
             Analytical study prepared for <strong>Rajasthan Royals</strong> (SuperRR Selector Season 2 – Round 1).
           </p>
           <p className="text-slate-500 font-mono text-[11px]">
-            Model V2 (Context-Normalised) &bull; Model V1 (Fixed-Threshold Baseline Preserved)
+            Dual Model Framework: Model V2 (Context-Normalised) &bull; Model V1 (Fixed-Threshold Preserved)
           </p>
         </div>
 

@@ -108,15 +108,15 @@ To ensure maximum analytical rigor and transparency, the dashboard presents both
 | **80th Percentile** | 13,927 | 15.89% |
 
 ### Model V1 Absolute Thresholds
-| Fixed Threshold | High-Pressure Deliveries | Share of Total Deliveries |
+| Fixed Threshold | Batting HP Deliveries | Bowling HP Deliveries |
 | :---: | :---: | :---: |
-| **Score $\ge 60$** | 10,839 | 12.36% |
-| **Score $\ge 65$ (Default V1)** | **6,799** | **7.75%** |
-| **Score $\ge 70$** | 4,048 | 4.62% |
+| **Score $\ge 60$** | 7,167 | 4,478 |
+| **Score $\ge 65$ (Default V1)** | **5,502** | **2,728** |
+| **Score $\ge 70$** | 4,792 | 1,617 |
 
 ---
 
-## 6. Project Architecture & File Inventory
+## 6. Project Architecture & 10-Page Structure
 
 ```text
 D:\Rajasthan Royals\
@@ -137,12 +137,20 @@ D:\Rajasthan Royals\
 │   ├── V2_methodology_and_limitations.md
 │   └── V1_V2_Validation_Review.md
 ├── src/
-│   ├── components/                 # Modular React 19 UI components
-│   │   ├── Navbar.tsx              # Sticky header with multi-section tabs
-│   │   ├── OverviewSection.tsx     # Section A: Executive overview & scope cards
-│   │   ├── BatterLeaderboardSection.tsx # Section B: V2 & V1 Top 10 Batters
-│   │   ├── BowlerLeaderboardSection.tsx # Section C: V2 & V1 Top 10 Bowlers + Warning
-│   │   ├── CandidateExplorerSection.tsx # Section D: Full 112 Batters / 129 Bowlers
+│   ├── components/                 # 10 Evaluator-Focused Analytical Sections
+│   │   ├── Navbar.tsx              # Sticky header with 10 direct page tabs
+│   │   ├── OverviewSection.tsx     # Page 1: Executive Overview & scope cards
+│   │   ├── BatterLeaderboardSection.tsx # Page 2: V2 Top 10 Batters (Ishan Kishan #1)
+│   │   ├── BowlerLeaderboardSection.tsx # Page 3: V2 Top 10 Bowlers + Warning (Shahbaz #1)
+│   │   ├── V1BaselineSection.tsx   # Page 4: V1 Baseline Results (Abdul Samad / Mukesh Kumar)
+│   │   ├── ModelComparisonSection.tsx   # Page 5: V1 vs V2 architectural comparison
+│   │   ├── CandidateExplorerSection.tsx # Page 6: Player Explorer (112 Batters / 129 Bowlers)
+│   │   ├── ViratKohliAuditSection.tsx   # Page 7: Dedicated Kohli case study (#95/112)
+│   │   ├── MethodologySection.tsx       # Page 8: Technical methodology & formulas
+│   │   ├── LimitationsSection.tsx       # Page 9: Validation, caveats & sensitivity
+│   │   ├── ConclusionSection.tsx        # Page 10: Final Analytical Conclusion
+│   │   ├── PlayerDetailModal.tsx   # Granular modal for V1 & V2 players
+│   │   └── Footer.tsx              # Footer with disclaimer & 10 page links
 │   │   ├── ModelComparisonSection.tsx   # Section E: V1 vs V2 architectural comparison
 │   │   ├── ViratKohliAuditSection.tsx   # Section F: Dedicated Kohli case study
 │   │   ├── MethodologySection.tsx       # Section G: Technical methodology & formulas
