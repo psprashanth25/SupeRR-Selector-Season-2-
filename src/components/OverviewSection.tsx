@@ -202,46 +202,50 @@ export const OverviewSection: React.FC<OverviewSectionProps> = ({
       </div>
 
       {/* Side-by-Side Model Architecture Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 w-full min-w-0">
         {/* Model V2 Card */}
-        <div className="bg-white rounded-xl border-2 border-blue-600 p-6 shadow-sm relative">
-          <div className="absolute top-4 right-4">
-            <span className="px-2.5 py-0.5 rounded text-xs font-bold uppercase tracking-wider bg-blue-100 text-blue-800">
-              Primary Exploratory Model
-            </span>
-          </div>
-          <h3 className="text-lg font-black text-slate-900 flex items-center space-x-2 mb-2">
-            <span className="w-2.5 h-2.5 rounded-full bg-blue-600"></span>
-            <span>Model V2: Context-Normalised Model</span>
-          </h3>
-          <p className="text-xs text-slate-600 mb-4 leading-relaxed">
-            Applies phase- and innings-specific 70th percentile pressure cutoffs (floor of 35) to balance pressure selection across early, middle, and late overs. Normalises percentiles within role groups and shrinks scores via Bayesian shrinkage <code className="bg-slate-100 px-1 py-0.5 rounded">n/(n+60)</code>.
-          </p>
+        <div className="bg-white rounded-xl border-2 border-blue-600 p-5 sm:p-6 shadow-sm flex flex-col justify-between w-full min-w-0">
+          <div>
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 mb-3">
+              <div className="flex items-center space-x-2 min-w-0">
+                <span className="w-2.5 h-2.5 rounded-full bg-blue-600 flex-shrink-0"></span>
+                <h3 className="text-base sm:text-lg font-black text-slate-900 tracking-tight">
+                  Model V2: Context-Normalised Model
+                </h3>
+              </div>
+              <span className="self-start sm:self-auto flex-shrink-0 px-2.5 py-1 rounded text-[11px] font-bold uppercase tracking-wider bg-blue-100 text-blue-800 border border-blue-200">
+                Primary Exploratory Model
+              </span>
+            </div>
+            <p className="text-xs text-slate-600 mb-4 leading-relaxed">
+              Applies phase- and innings-specific 70th percentile pressure cutoffs (floor of 35) to balance pressure selection across early, middle, and late overs. Normalises percentiles within role groups and shrinks scores via Bayesian shrinkage <code className="bg-slate-100 px-1 py-0.5 rounded font-mono">n/(n+60)</code>.
+            </p>
 
-          <div className="grid grid-cols-2 gap-3 text-xs mb-4">
-            <div className="bg-slate-50 p-2.5 rounded-lg border border-slate-100">
-              <span className="text-slate-500 block">High-Pressure Cutoff</span>
-              <span className="font-bold text-slate-800 font-mono">Phase 70th %ile (Min 35)</span>
-            </div>
-            <div className="bg-slate-50 p-2.5 rounded-lg border border-slate-100">
-              <span className="text-slate-500 block">Pressure Deliveries</span>
-              <span className="font-bold text-slate-800 font-mono">17,592 (20.07%)</span>
-            </div>
-            <div className="bg-slate-50 p-2.5 rounded-lg border border-slate-100">
-              <span className="text-slate-500 block">Eligible Candidate Pool</span>
-              <span className="font-bold text-slate-800 font-mono">112 Batters / 129 Bowlers</span>
-            </div>
-            <div className="bg-slate-50 p-2.5 rounded-lg border border-slate-100">
-              <span className="text-slate-500 block">Role Normalisation</span>
-              <span className="font-bold text-slate-800 font-mono">3 Bat Roles / 3 Bowl Phases</span>
+            <div className="grid grid-cols-2 gap-3 text-xs mb-4 min-w-0">
+              <div className="bg-slate-50 p-2.5 rounded-lg border border-slate-100 min-w-0">
+                <span className="text-slate-500 block text-[11px]">High-Pressure Cutoff</span>
+                <span className="font-bold text-slate-800 font-mono text-xs">Phase 70th %ile (Min 35)</span>
+              </div>
+              <div className="bg-slate-50 p-2.5 rounded-lg border border-slate-100 min-w-0">
+                <span className="text-slate-500 block text-[11px]">Pressure Deliveries</span>
+                <span className="font-bold text-slate-800 font-mono text-xs">17,592 (20.07%)</span>
+              </div>
+              <div className="bg-slate-50 p-2.5 rounded-lg border border-slate-100 min-w-0">
+                <span className="text-slate-500 block text-[11px]">Eligible Candidate Pool</span>
+                <span className="font-bold text-slate-800 font-mono text-xs">112 Batters / 129 Bowlers</span>
+              </div>
+              <div className="bg-slate-50 p-2.5 rounded-lg border border-slate-100 min-w-0">
+                <span className="text-slate-500 block text-[11px]">Role Normalisation</span>
+                <span className="font-bold text-slate-800 font-mono text-xs">3 Bat Roles / 3 Bowl Phases</span>
+              </div>
             </div>
           </div>
 
-          <div className="border-t border-slate-100 pt-3 flex items-center justify-between">
+          <div className="border-t border-slate-100 pt-3 mt-auto flex flex-col sm:flex-row sm:items-center justify-between gap-2">
             <span className="text-xs text-slate-500">Top Rankers: Ishan Kishan (Bat) / Shahbaz Ahmed (Bowl)</span>
             <button
               onClick={() => onNavigate('batters')}
-              className="text-xs font-bold text-blue-600 hover:text-blue-800 inline-flex items-center space-x-1"
+              className="text-xs font-bold text-blue-600 hover:text-blue-800 inline-flex items-center space-x-1 self-start sm:self-auto"
             >
               <span>Explore V2</span>
               <ArrowRight className="w-3.5 h-3.5" />
@@ -250,42 +254,46 @@ export const OverviewSection: React.FC<OverviewSectionProps> = ({
         </div>
 
         {/* Model V1 Card */}
-        <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm relative">
-          <div className="absolute top-4 right-4">
-            <span className="px-2.5 py-0.5 rounded text-xs font-bold uppercase tracking-wider bg-slate-100 text-slate-700">
-              Baseline Model (Preserved)
-            </span>
-          </div>
-          <h3 className="text-lg font-black text-slate-900 flex items-center space-x-2 mb-2">
-            <span className="w-2.5 h-2.5 rounded-full bg-slate-400"></span>
-            <span>Model V1: Fixed-Threshold Baseline</span>
-          </h3>
-          <p className="text-xs text-slate-600 mb-4 leading-relaxed">
-            Uses a single fixed absolute pre-delivery pressure threshold of &ge; 65 across all phases. Evaluates all qualified players in a single undivided pool, shrinking multi-metric percentiles via <code className="bg-slate-100 px-1 py-0.5 rounded">n/(n+60)</code>.
-          </p>
+        <div className="bg-white rounded-xl border border-slate-200 p-5 sm:p-6 shadow-sm flex flex-col justify-between w-full min-w-0">
+          <div>
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 mb-3">
+              <div className="flex items-center space-x-2 min-w-0">
+                <span className="w-2.5 h-2.5 rounded-full bg-slate-400 flex-shrink-0"></span>
+                <h3 className="text-base sm:text-lg font-black text-slate-900 tracking-tight">
+                  Model V1: Fixed-Threshold Baseline
+                </h3>
+              </div>
+              <span className="self-start sm:self-auto flex-shrink-0 px-2.5 py-1 rounded text-[11px] font-bold uppercase tracking-wider bg-slate-100 text-slate-700 border border-slate-200">
+                Baseline Model (Preserved)
+              </span>
+            </div>
+            <p className="text-xs text-slate-600 mb-4 leading-relaxed">
+              Uses a single fixed absolute pre-delivery pressure threshold of &ge; 65 across all phases. Evaluates all qualified players in a single undivided pool, shrinking multi-metric percentiles via <code className="bg-slate-100 px-1 py-0.5 rounded font-mono">n/(n+60)</code>.
+            </p>
 
-          <div className="grid grid-cols-2 gap-3 text-xs mb-4">
-            <div className="bg-slate-50 p-2.5 rounded-lg border border-slate-100">
-              <span className="text-slate-500 block">High-Pressure Cutoff</span>
-              <span className="font-bold text-slate-800 font-mono">Fixed &ge; 65 Score</span>
-            </div>
-            <div className="bg-slate-50 p-2.5 rounded-lg border border-slate-100">
-              <span className="text-slate-500 block">Pressure Deliveries</span>
-              <span className="font-bold text-slate-800 font-mono">6,799 / 6,800 (7.75%)</span>
-            </div>
-            <div className="bg-slate-50 p-2.5 rounded-lg border border-slate-100">
-              <span className="text-slate-500 block">Eligible Candidate Pool</span>
-              <span className="font-bold text-slate-800 font-mono">37 Batters / 32 Bowlers</span>
-            </div>
-            <div className="bg-slate-50 p-2.5 rounded-lg border border-slate-100">
-              <span className="text-slate-500 block">Role Normalisation</span>
-              <span className="font-bold text-slate-800 font-mono">None (Single Pool)</span>
+            <div className="grid grid-cols-2 gap-3 text-xs mb-4 min-w-0">
+              <div className="bg-slate-50 p-2.5 rounded-lg border border-slate-100 min-w-0">
+                <span className="text-slate-500 block text-[11px]">High-Pressure Cutoff</span>
+                <span className="font-bold text-slate-800 font-mono text-xs">Fixed &ge; 65 Score</span>
+              </div>
+              <div className="bg-slate-50 p-2.5 rounded-lg border border-slate-100 min-w-0">
+                <span className="text-slate-500 block text-[11px]">Pressure Deliveries</span>
+                <span className="font-bold text-slate-800 font-mono text-xs">6,799 / 6,800 (7.75%)</span>
+              </div>
+              <div className="bg-slate-50 p-2.5 rounded-lg border border-slate-100 min-w-0">
+                <span className="text-slate-500 block text-[11px]">Eligible Candidate Pool</span>
+                <span className="font-bold text-slate-800 font-mono text-xs">37 Batters / 32 Bowlers</span>
+              </div>
+              <div className="bg-slate-50 p-2.5 rounded-lg border border-slate-100 min-w-0">
+                <span className="text-slate-500 block text-[11px]">Role Normalisation</span>
+                <span className="font-bold text-slate-800 font-mono text-xs">None (Single Pool)</span>
+              </div>
             </div>
           </div>
 
-          <div className="border-t border-slate-100 pt-3 flex items-center justify-between">
+          <div className="border-t border-slate-100 pt-3 mt-auto flex flex-col sm:flex-row sm:items-center justify-between gap-2">
             <span className="text-xs text-slate-500">Top Rankers: Abdul Samad (Bat) / Mukesh Kumar (Bowl)</span>
-            <div className="flex items-center space-x-3">
+            <div className="flex items-center space-x-3 self-start sm:self-auto">
               <button
                 onClick={() => onNavigate('v1-baseline')}
                 className="text-xs font-bold text-blue-600 hover:text-blue-800 inline-flex items-center space-x-1"
